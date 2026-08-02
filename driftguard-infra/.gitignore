@@ -1,0 +1,28 @@
+# Terraform working data and local state
+**/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+crash.log
+crash.*.log
+plans/
+# Terraform lock files are intentionally tracked for provider reproducibility.
+
+# Python tooling
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+
+# Local credentials and generated logs
+.env
+.env.*
+!.env.example
+*.secret
+*.pem
+*.key
+*.log

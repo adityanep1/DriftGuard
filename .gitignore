@@ -1,0 +1,54 @@
+# DriftGuard workspace-level .gitignore
+# Keep source, specifications, steering, lock files, fixtures, and documentation tracked.
+
+# === Operating systems and editors ===
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# === Python caches and local environments ===
+**/__pycache__/
+**/*.py[cod]
+**/.pytest_cache/
+**/.mypy_cache/
+**/.ruff_cache/
+**/.coverage
+**/htmlcov/
+**/.venv/
+**/venv/
+**/env/
+
+# === Terraform working data and local state ===
+**/.terraform/
+**/*.tfstate
+**/*.tfstate.*
+**/*.tfplan
+**/crash.log
+**/crash.*.log
+**/plans/
+# Do NOT ignore .terraform.lock.hcl — provider selections must be reviewed and committed.
+
+# === Local secrets and environment files ===
+.env
+.env.*
+!.env.example
+*.secret
+*.pem
+*.key
+
+# === Tool output and generated artifacts ===
+**/coverage.xml
+**/test-results/
+**/reports/
+*.log
+**/*-out.txt
+**/*-err.txt
+
+# === Workspace-local scratch files (not project deliverables) ===
+note.txt
+todo.md
+REVIEW_FINDINGS.md
+SWE_DevOps_AWS_Portfolio_Roadmap.md

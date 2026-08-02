@@ -46,11 +46,10 @@ fi
 
 ORIGINAL_STORE=$(kubectl --context "$CONTEXT" -n demo-dev get secretstore aws-secrets-manager -o yaml)
 
-cleanup() {
-  echo "Restoring original SecretStore..."
+restore_store() {
   echo "$ORIGINAL_STORE" | kubectl --context "$CONTEXT" apply -f - 2>/dev/null || true
 }
-trap cleanup EXIT
+trap restore_store EXIT
 
 kubectl --context "$CONTEXT" -n demo-dev patch secretstore aws-secrets-manager \
   --type merge -p '{"spec":{"provider":{"aws":{"region":"invalid-driftguard-region"}}}}'
@@ -63,6 +62,8 @@ if [ "$BEFORE_DATA" != "$AFTER_DATA" ]; then
   echo "ESO changed or removed previously materialized values after store failure." >&2; exit 1
 fi
 echo "ESO preservation verified."
+restore_store
+trap - EXIT
 
 # --- Gatekeeper fail-closed ---
 echo "Verifying Gatekeeper fail-closed behavior..."
@@ -81,9 +82,7 @@ restore_gatekeeper() {
   kubectl --context "$CONTEXT" -n gatekeeper-system rollout status \
     deployment/gatekeeper-controller-manager --timeout=300s 2>/dev/null || true
 }
-
-# Update trap to also restore Gatekeeper
-trap 'restore_gatekeeper; cleanup' EXIT
+trap restore_gatekeeper EXIT
 
 kubectl --context "$CONTEXT" -n gatekeeper-system scale \
   deployment/gatekeeper-controller-manager --replicas=0
@@ -96,8 +95,7 @@ if kubectl --context "$CONTEXT" -n demo-dev run gatekeeper-negative-test \
 fi
 echo "Gatekeeper correctly rejected admission while unavailable."
 restore_gatekeeper
-# Reset trap back to just cleanup (store already handled)
-trap cleanup EXIT
+trap - EXIT
 
 # --- Falco trigger and alert forwarding ---
 echo "Verifying Falco alert trigger and forwarding..."
