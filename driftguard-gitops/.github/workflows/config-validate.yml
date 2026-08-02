@@ -1,0 +1,27 @@
+name: config-repo-validate
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Reject plaintext secrets
+        run: python scripts/scan_no_plaintext_secrets.py .
+      - name: Install conftest
+        run: |
+          curl -fsSL -o conftest.tar.gz https://github.com/open-policy-agent/conftest/releases/download/v0.56.0/conftest_0.56.0_Linux_x86_64.tar.gz
+          tar -xzf conftest.tar.gz conftest
+          sudo install conftest /usr/local/bin/conftest
+      - name: Check ArgoCD invariants
+        run: |
+          find . -type f \( -name '*.yaml' -o -name '*.yml' \) -print0 | xargs -0 -n1 conftest test --policy conformance
+      - name: Run scanner tests
+        run: python -m pytest tests -q

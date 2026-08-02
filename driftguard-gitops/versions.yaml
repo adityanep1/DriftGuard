@@ -1,0 +1,32 @@
+terraform: "1.15.3"
+argocd:
+  chart: "7.7.16"
+  app: "v2.13.3"
+argo_rollouts:
+  chart: "2.37.8"
+aws_load_balancer_controller:
+  chart: "1.8.3"
+external_secrets:
+  chart: "0.10.0"
+gatekeeper:
+  chart: "3.16.3"
+falco:
+  chart: "4.19.0"
+falcosidekick:
+  chart: "0.9.0"
+karpenter:
+  chart: "1.0.6"
+crossplane:
+  chart: "1.20.0"
+provider_aws:
+  package: "v1.15.0"
+kube_prometheus_stack:
+  chart: "65.8.1"
+loki:
+  chart: "6.6.3"
+tempo:
+  chart: "1.10.3"
+
+# Tool versions are pinned in CI workflows as well; update this file in the same change.
+kubeconform: "0.6.7"
+conftest: "0.56.0"
