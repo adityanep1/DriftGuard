@@ -1,0 +1,54 @@
+apiVersion: karpenter.sh/v1
+kind: NodePool
+metadata:
+  name: driftguard-default
+  labels:
+    app.kubernetes.io/name: driftguard-nodepool
+    app.kubernetes.io/part-of: driftguard
+  annotations:
+    driftguard.io/max-node-count: "100"
+spec:
+  template:
+    metadata:
+      labels:
+        workload: driftguard
+    spec:
+      nodeClassRef:
+        group: karpenter.k8s.aws
+        kind: EC2NodeClass
+        name: driftguard-default
+      requirements:
+        - key: kubernetes.io/arch
+          operator: In
+          values: [amd64]
+        - key: karpenter.sh/capacity-type
+          operator: In
+          values: [on-demand, spot]
+  limits:
+    cpu: "1000"
+  disruption:
+    consolidationPolicy: WhenEmptyOrUnderutilized
+    consolidateAfter: 600s
+---
+apiVersion: karpenter.k8s.aws/v1beta1
+kind: EC2NodeClass
+metadata:
+  name: driftguard-default
+  labels:
+    app.kubernetes.io/name: driftguard-nodeclass
+    app.kubernetes.io/part-of: driftguard
+spec:
+  amiFamily: AL2023
+  role: driftguard-prod-nodes
+  subnetSelectorTerms:
+    - tags:
+        kubernetes.io/role/internal-elb: "1"
+  securityGroupSelectorTerms:
+    - tags:
+        aws:eks:cluster-name: driftguard-prod
+  blockDeviceMappings:
+    - deviceName: /dev/xvda
+      ebs:
+        volumeSize: 50Gi
+        volumeType: gp3
+        encrypted: true

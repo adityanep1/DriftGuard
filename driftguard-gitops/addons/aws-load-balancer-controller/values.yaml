@@ -1,0 +1,17 @@
+# AWS Load Balancer Controller Helm values
+# Chart: aws-load-balancer-controller (https://aws.github.io/eks-charts)
+# Pinned version managed in bootstrap/children or applicationsets.
+
+clusterName: driftguard-dev
+serviceAccount:
+  create: true
+  name: aws-load-balancer-controller
+  annotations:
+    # IRSA role ARN — replace with Terraform output
+    eks.amazonaws.com/role-arn: "arn:aws:iam::123456789012:role/driftguard-dev-aws-lbc"
+
+enableShield: false
+enableWaf: false
+enableWafv2: false
+
+# HTTPS redirect is handled via Ingress annotations, not controller-level config.

@@ -1,0 +1,13 @@
+# Argo Rollouts Helm values
+# Chart: argo-rollouts (https://argoproj.github.io/argo-helm)
+# Pinned version managed in bootstrap/children or applicationsets.
+
+controller:
+  replicas: 1
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+
+dashboard:
+  enabled: false

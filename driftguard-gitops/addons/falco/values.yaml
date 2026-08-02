@@ -1,0 +1,14 @@
+# Falco Helm values
+# Chart: falco (https://falcosecurity.github.io/charts)
+# Pinned version managed in bootstrap/children/falco-app.yaml.
+
+falco:
+  jsonOutput: true
+  httpOutput:
+    enabled: true
+    url: http://falcosidekick.falco.svc.cluster.local:2801
+
+# Falcosidekick is deployed separately via falcosidekick-app.yaml.
+# Sidekick forwards alerts to Loki at:
+#   http://loki-gateway.monitoring.svc:3100
+# Minimum priority: warning

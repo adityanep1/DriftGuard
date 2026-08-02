@@ -1,0 +1,15 @@
+# Gatekeeper Helm values
+# Chart: gatekeeper (https://open-policy-agent.github.io/gatekeeper/charts)
+# Pinned version managed in bootstrap/children or applicationsets.
+
+replicas: 2
+
+# Fail-closed: webhook rejects admission if evaluation cannot complete.
+controllerManager:
+  failurePolicy: Fail
+
+audit:
+  replicas: 1
+
+# ConstraintTemplates and Constraints are deployed separately under
+# driftguard-gitops/policies/constrainttemplates/ and policies/constraints/.

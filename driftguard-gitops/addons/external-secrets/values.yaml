@@ -1,0 +1,18 @@
+# External Secrets Operator Helm values
+# Chart: external-secrets (https://charts.external-secrets.io)
+# Pinned version managed in bootstrap/children or applicationsets.
+
+installCRDs: true
+
+serviceAccount:
+  create: true
+  name: external-secrets
+  annotations:
+    # IRSA role ARN — replace with Terraform output
+    eks.amazonaws.com/role-arn: "arn:aws:iam::123456789012:role/driftguard-dev-eso"
+
+webhook:
+  create: true
+
+certController:
+  create: true
