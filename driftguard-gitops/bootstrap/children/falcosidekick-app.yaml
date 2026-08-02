@@ -1,0 +1,31 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: falcosidekick
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
+spec:
+  project: platform-addons
+  source:
+    repoURL: https://falcosecurity.github.io/charts
+    chart: falcosidekick
+    targetRevision: "0.9.0"
+    helm:
+      releaseName: falcosidekick
+      values: |
+        config:
+          loki:
+            hostport: http://loki-gateway.monitoring.svc:3100
+            minimumpriority: warning
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: falco
+  syncPolicy:
+    automated:
+      selfHeal: true
+      prune: false
+    syncOptions:
+      - CreateNamespace=true
+    retry:
+      limit: 5
