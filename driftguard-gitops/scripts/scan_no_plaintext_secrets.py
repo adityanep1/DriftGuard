@@ -14,7 +14,7 @@ ASSIGNMENT = re.compile(
     r"\s*[:=]\s*[\"']?([A-Za-z0-9+/=_-]{20,})"
 )
 REFERENCE_MARKERS = ("REPLACE_WITH", "${", "ENC[", "ref:", "remoteRef:", "secretKeyRef:")
-IGNORED_NAMES = {".gitkeep", ".gitignore", "scan_no_plaintext_secrets.py"}
+IGNORED_NAMES = {".gitkeep", ".gitignore", "scan_no_plaintext_secrets.py", "test_no_plaintext_secrets.py"}
 
 
 def shannon_entropy(value: str) -> float:

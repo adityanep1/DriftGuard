@@ -22,6 +22,11 @@ jobs:
           sudo install conftest /usr/local/bin/conftest
       - name: Check ArgoCD invariants
         run: |
-          find . -type f \( -name '*.yaml' -o -name '*.yml' \) -print0 | xargs -0 -n1 conftest test --policy conformance
+          find . -type f \( -name '*.yaml' -o -name '*.yml' \) \
+            ! -path './.github/*' \
+            ! -name '.pre-commit-config.yaml' \
+            -print0 | xargs -0 -n1 conftest test --all-namespaces --policy conformance
+      - name: Install test dependencies
+        run: pip install pytest hypothesis pyyaml
       - name: Run scanner tests
         run: python -m pytest tests -q

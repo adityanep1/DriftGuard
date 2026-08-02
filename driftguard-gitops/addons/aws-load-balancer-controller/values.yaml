@@ -7,7 +7,7 @@ serviceAccount:
   create: true
   name: aws-load-balancer-controller
   annotations:
-    # IRSA role ARN — replace with Terraform output
+    # IRSA role ARN: replace with Terraform output
     eks.amazonaws.com/role-arn: "arn:aws:iam::123456789012:role/driftguard-dev-aws-lbc"
 
 enableShield: false

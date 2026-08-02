@@ -1,30 +1,39 @@
-# GitOps bootstrap
+# GitOps Bootstrap
 
-Bootstrap is the controlled handoff from Terraform to ArgoCD. Terraform installs the pinned ArgoCD Helm chart and seeds one Root_Application. The Root_Application reads `bootstrap/children` from the Config_Repo and discovers the direct child Applications.
+Bootstrap is where Terraform hands control to ArgoCD. This is the bridge between Layer A (infrastructure) and Layer B (GitOps). Terraform installs the pinned ArgoCD Helm chart and creates one Root Application. That Root Application reads from `bootstrap/children/` in this Config Repo and discovers all the direct child Applications that make up the platform.
 
-## Files
+From that single seed, the entire cluster configuration fans out.
 
-- `root-app.yaml` — the single seed Application created by Terraform.
-- `children/projects-app.yaml` — AppProjects and declarative ArgoCD configuration.
-- `children/applicationsets-app.yaml` — platform/workload/observability ApplicationSets.
-- `children/security-app.yaml` — Gatekeeper policies and constraints.
-- `children/secrets-app.yaml` — ExternalSecret and SecretStore references.
-- `children/observability-config-app.yaml` — collector, dashboards, and SLO configuration.
-- `children/karpenter-nodepool-app.yaml` — Karpenter capacity resources.
-- explicit add-on child Applications — configured chart sources such as Falco/Falcosidekick.
+## What is in this directory
+
+| File | Purpose |
+|---|---|
+| `root-app.yaml` | The single seed Application created by Terraform |
+| `children/projects-app.yaml` | AppProjects and declarative ArgoCD configuration |
+| `children/applicationsets-app.yaml` | Platform, workload, and observability ApplicationSets |
+| `children/security-app.yaml` | Gatekeeper policies and constraints |
+| `children/secrets-app.yaml` | ExternalSecret and SecretStore references |
+| `children/observability-config-app.yaml` | Collector, dashboards, and SLO configuration |
+| `children/karpenter-nodepool-app.yaml` | Karpenter capacity resources |
+| Explicit add-on child Applications | Configured chart sources such as Falco/Falcosidekick |
 
 ## Safety invariants
 
-The root source path must remain valid and reachable. Children must use approved AppProjects, explicit source repositories, explicit destination namespaces, sync waves, retry limit 5, and pruning disabled by default. Do not add a child that points to a plaintext secret or an unreviewed external repository.
+The bootstrap tree has strict rules:
 
-## Bootstrap workflow
+- The root source path must remain valid and reachable (if ArgoCD cannot read it, the cluster stops converging).
+- Every child must use an approved AppProject with explicit source repos, destination namespaces, and sync waves.
+- Retry limit 5 and pruning disabled by default on all children.
+- No child should point to a plaintext secret or an unreviewed external repository.
 
-1. Confirm the Config_Repo URL, revision, branch, and placeholder replacement.
-2. Apply Terraform `addons-bootstrap` only after EKS and provider configuration are ready.
-3. Wait for all ArgoCD control-plane components to become Ready within 600 seconds.
-4. Verify Root_Application sync/health and all direct child Applications within 180 seconds.
-5. Inspect generated ApplicationSets and add-on health before deploying workloads.
+## How the bootstrap workflow works
 
-## Failure handling
+1. Confirm the Config Repo URL, revision, branch, and that all placeholder values have been replaced.
+2. Apply Terraform's `addons-bootstrap` module only after EKS and provider configuration are ready.
+3. Wait for all ArgoCD control-plane components to become Ready (up to 600 seconds).
+4. Verify that the Root Application syncs and is healthy, and that all direct child Applications come up within 180 seconds.
+5. Inspect the generated ApplicationSets and add-on health before deploying any workloads.
 
-If ArgoCD is unhealthy, do not create or trust the Root_Application. If the repository is unreachable or a child is invalid, preserve existing healthy children, inspect Application conditions/events, and repair Git. Do not repair bootstrap by manually applying day-2 manifests.
+## What to do when things go wrong
+
+If ArgoCD is unhealthy, do not create or trust the Root Application. If the repository is unreachable or a child definition is invalid, preserve existing healthy children, inspect Application conditions and events, and fix the issue in Git. Do not attempt to repair the bootstrap by manually applying day-2 manifests; the whole point is that Git is the single source of truth.

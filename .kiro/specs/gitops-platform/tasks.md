@@ -1,4 +1,4 @@
-# Implementation Plan: DriftGuard — GitOps Infrastructure Automation Platform
+# Implementation Plan: DriftGuard  -  GitOps Infrastructure Automation Platform
 
 ## Overview
 
@@ -21,14 +21,14 @@ Every property test MUST run a minimum of 100 iterations and carry the tag
 ### Kiro Hook Opportunities (policy-as-code guardrails)
 
 This project benefits from automated guardrails. The following Kiro hooks can be created to enforce the
-design's fail-closed posture on every edit (verify-RLS is N/A — there is no database):
+design's fail-closed posture on every edit (verify-RLS is N/A  -  there is no database):
 
-- **verify-terraform-security** — `fileEdited` on `**/*.tf`, `**/*.tfvars` → run `tfsec`/`Checkov` +
+- **verify-terraform-security**  -  `fileEdited` on `**/*.tf`, `**/*.tfvars` → run `tfsec`/`Checkov` +
   `conftest` over `terraform plan -json`; surfaces R24.5/R24.6 (P1, P2, P4, P5) before commit.
-- **verify-argocd-invariants** — `fileEdited` on `driftguard-gitops/**/*.yaml` → run `kubeconform` +
+- **verify-argocd-invariants**  -  `fileEdited` on `driftguard-gitops/**/*.yaml` → run `kubeconform` +
   `conftest` for the ArgoCD manifest invariants (prune opt-in P7, App→Project default-deny P8) and
   Gatekeeper policy tests.
-- **guard-secrets** — `fileCreated`/`fileEdited` on `driftguard-gitops/**` (esp. `secrets/`) → run the
+- **guard-secrets**  -  `fileCreated`/`fileEdited` on `driftguard-gitops/**` (esp. `secrets/`) → run the
   no-plaintext-secrets scanner (P9, R23.3/R24.4); reject plaintext before it ever reaches Git.
 
 Hook creation is noted here for the operator; the underlying checks are implemented as tasks below so they
@@ -140,7 +140,7 @@ also run in CI.
     - `terraform validate`/`tflint`/`tfsec` clean on the module
     - _Requirements: 24.5_
 
-- [x] 7. Checkpoint — modules pass static, security, and property gates
+- [x] 7. Checkpoint  -  modules pass static, security, and property gates
   - Ensure all tests pass, ask the user if questions arise.
 
 - [x] 8. Compose per-environment roots and node-cap validation
@@ -205,7 +205,7 @@ also run in CI.
       account once an alternative auth method authenticates an admin; reject subsequent `admin` logins
     - _Requirements: 14.4, 14.5, 14.6, 14.7_
 
-- [x] 11. Checkpoint — GitOps control plane reconciles and passes invariants
+- [x] 11. Checkpoint  -  GitOps control plane reconciles and passes invariants
   - All offline tests pass (Python property tests, Terraform validate/fmt, YAML parsing)
   - Integration runtime (ArgoCD reconciliation) requires an ephemeral cluster
 
@@ -314,7 +314,7 @@ also run in CI.
     - Against seeded Prometheus data: clean metrics promote; breaching/unavailable metrics abort and roll back
     - _Requirements: 18.5, 18.6_
 
-- [x] 16. Checkpoint — workload builds, deploys via GitOps, and analyzes correctly
+- [x] 16. Checkpoint  -  workload builds, deploys via GitOps, and analyzes correctly
   - All offline tests pass (Demo_Service unit tests, Rollouts manifest tests, CI logic tests)
   - Runtime deployment and analysis requires an ephemeral cluster with ArgoCD + Argo Rollouts
 
@@ -382,13 +382,13 @@ also run in CI.
       zero billable resources
     - _Requirements: 11.2, 11.3, 18.5, 26.1, 26.2, 27.2_
 
-- [x] 20. Final checkpoint — full test pyramid green
+- [x] 20. Final checkpoint  -  full test pyramid green
   - Offline layer verified: 38 Python tests pass (24 infra + 10 gitops + 4 demo-service)
   - Terraform validate + fmt clean across all 7 modules, 3 env roots, and bootstrap
   - Integration scripts authored for layers 4–5 (argocd, addons, crossplane, e2e-smoke)
   - **Blocked checks**: Layer 4/5 integration + e2e require ephemeral cluster provisioning
 
-- [x] 21. Crossplane provisioning from Kubernetes (STRETCH — optional)
+- [x] 21. Crossplane provisioning from Kubernetes (STRETCH  -  optional)
   - [x] 21.1 Author the Crossplane + AWS provider add-on behind a feature flag
     - Install via GitOps when enabled; Healthy/Ready ≤600s or report failed and reject claims; disabled by default
     - Manifests authored: `driftguard-gitops/optional/crossplane/` (controller app, resources app, provider, XRD, composition)
@@ -415,7 +415,7 @@ also run in CI.
   `Feature: gitops-platform, Property N: <property text>`; they are placed next to the code that implements
   the property so failures are caught early.
 - External controllers (ArgoCD, Rollouts, Karpenter, Gatekeeper webhook, Falco, ESO) are validated via
-  conformance/snapshot, integration (Layer 4), and the Layer-5 end-to-end smoke run — not PBT.
+  conformance/snapshot, integration (Layer 4), and the Layer-5 end-to-end smoke run  -  not PBT.
 - Checkpoints (Tasks 7, 11, 16, 20) enforce incremental validation at natural boundaries.
 - The three Kiro hooks described in the Overview automate the same guardrails these tasks implement, so the
   policy-as-code posture is enforced on every edit as well as in CI.

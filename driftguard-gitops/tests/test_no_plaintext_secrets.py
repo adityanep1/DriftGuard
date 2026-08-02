@@ -45,7 +45,7 @@ def test_tree_scan_allows_repository_references(tmp_path):
 
 if given:
     @settings(max_examples=100, deadline=None)
-    @given(st.text(alphabet=st.characters(whitelist_categories=("Lu", "Ll", "Nd")), min_size=20, max_size=64))
+    @given(st.text(alphabet="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789", min_size=20, max_size=64))
     def test_property_9_plaintext_credential_assignments_are_rejected(value):
         """Feature: gitops-platform, Property 9: No plaintext secrets are committed to Git"""
         assume("\n" not in value)

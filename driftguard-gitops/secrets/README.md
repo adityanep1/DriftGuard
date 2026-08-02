@@ -1,21 +1,29 @@
-# External secret references
+# External Secret References
 
-This directory contains only declarative references to external secret material. AWS Secrets Manager is the source of secret values; Git stores the SecretStore connection reference and ExternalSecret mapping.
+This directory contains only declarative references to external secret material. The actual secret values live in AWS Secrets Manager; Git stores the connection configuration and mapping definitions. Nothing in this directory should ever contain an actual secret value.
 
-## Allowed content
+## What belongs here
 
-- SecretStore or ClusterSecretStore provider configuration.
-- ExternalSecret refresh interval, target metadata, remote key names, and selected properties.
-- ServiceAccount references whose IAM trust is separately managed by Terraform.
+- **SecretStore or ClusterSecretStore** provider configuration (tells ESO how to connect to the external store)
+- **ExternalSecret** definitions with refresh interval, target metadata, remote key names, and selected properties
+- **ServiceAccount references** whose IAM trust is managed separately by Terraform (IRSA)
 
-## Prohibited content
+## What must never be here
 
-Never commit secret values, access keys, private keys, bearer tokens, passwords, base64 values copied from a Secret, or credentials inside Helm values. `.gitignore` reduces accidental local inclusion but is not a security control; the scanner and CI policy remain mandatory.
+Never commit: secret values, AWS access keys, private keys, bearer tokens, passwords, base64-encoded Secret data, or credentials inside Helm values. The `.gitignore` file helps prevent accidental local inclusion, but it is not a security control. The secret scanner and CI policy are the real safety nets.
 
-## Failure behavior
+## How failure works
 
-ESO must materialize the requested Secret within 60 seconds in a healthy test environment. If the external store is unreachable, previously materialized values must be preserved and the ExternalSecret status must report the failure. Do not fix a provider failure by replacing the reference with plaintext.
+In a healthy environment, ESO should materialize the requested Kubernetes Secret within 60 seconds. If the external store becomes unreachable, previously materialized values are preserved (workloads keep running) and the ExternalSecret status reports the failure. The correct response to a provider failure is to fix the connection, not to replace the reference with a plaintext value.
 
 ## Validation
 
-Run `python scripts/scan_no_plaintext_secrets.py .`, repository tests, YAML schema/conformance checks, and the ESO integration script against a dedicated cluster. Inspect ExternalSecret conditions, Secret data keys without printing values, and SecretStore provider errors.
+```bash
+# Run the secret scanner
+python scripts/scan_no_plaintext_secrets.py .
+
+# Run the full test suite
+python -m pytest tests -q
+```
+
+For runtime validation, inspect ExternalSecret conditions, verify Secret data keys exist (without printing values), and check SecretStore provider error messages. This requires a cluster with ESO deployed and the external store accessible.

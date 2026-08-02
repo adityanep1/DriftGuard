@@ -111,7 +111,7 @@ resource "aws_route" "private_default" {
 
   route_table_id         = aws_route_table.private[each.key].id
   destination_cidr_block = "0.0.0.0/0"
-  nat_gateway_id         = aws_nat_gateway.nat[(var.environment == "prod" || var.nat_per_az) ? each.key : 0].id
+  nat_gateway_id         = aws_nat_gateway.nat[(var.environment == "prod" || var.nat_per_az) ? each.key : "0"].id
 }
 
 resource "aws_route_table_association" "private" {

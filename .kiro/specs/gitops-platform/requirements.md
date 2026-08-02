@@ -225,7 +225,7 @@ This document specifies the complete expert-level scope. Requirements are organi
 6. WHEN an alternative authentication method has been configured and verified as able to authenticate at least one administrative Operator, THE ArgoCD SHALL disable the default administrative account.
 7. IF the default administrative account is disabled, THEN THE ArgoCD SHALL reject any authentication attempt that uses the default administrative account.
 
-### Requirement 15: CI Pipeline — Build, Test, Scan, Publish
+### Requirement 15: CI Pipeline  -  Build, Test, Scan, Publish
 
 **User Story:** As a developer, I want a CI pipeline that builds, tests, scans, and publishes images, so that only verified images reach the registry.
 

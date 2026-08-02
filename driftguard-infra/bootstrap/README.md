@@ -1,16 +1,38 @@
-# Terraform state backend bootstrap
+# Terraform State Backend Bootstrap
 
-This root has **no backend block by design**. It must be inspected and applied once with local state by an operator who has explicitly approved AWS provisioning. After creation, migrate each `live/<environment>` root to the bucket and its environment-specific key.
+This directory sets up the remote state infrastructure that all other Terraform roots depend on. It creates an S3 bucket for state storage and a DynamoDB table for state locking. Because it creates the backend itself, this root has **no backend block by design** and must be applied with local state.
+
+This is a one-time operation. An operator inspects the plan, applies it manually, and then migrates each `live/<environment>` root to use the new bucket.
 
 ## Safe inspection
 
-```text
+You can safely inspect what this will create without changing anything:
+
+```bash
 terraform init
 terraform fmt -check -recursive
 terraform validate
 terraform plan -var='state_bucket_name=REPLACE_WITH_UNIQUE_BUCKET_NAME'
 ```
 
-Do not run `terraform apply` from automated validation. The bucket enforces TLS, blocks public access, enables versioning, and uses server-side encryption. DynamoDB uses on-demand billing and the standard `LockID` hash key for Terraform locking.
+Do not run `terraform apply` from automated validation or CI. This is always a manual, deliberate action.
 
-Each live root uses a distinct key: `env/dev/terraform.tfstate`, `env/staging/terraform.tfstate`, or `env/prod/terraform.tfstate`.
+## What gets created
+
+The state bucket is configured with:
+- TLS enforcement (no unencrypted connections)
+- Public access blocked
+- Versioning enabled (so you can recover from accidental state corruption)
+- Server-side encryption at rest
+
+The DynamoDB table uses on-demand billing and the standard `LockID` hash key that Terraform expects for state locking.
+
+## Backend keys
+
+After the bucket exists, each environment root uses a distinct key so their state files never collide:
+
+| Environment | Backend key |
+|---|---|
+| dev | `env/dev/terraform.tfstate` |
+| staging | `env/staging/terraform.tfstate` |
+| prod | `env/prod/terraform.tfstate` |

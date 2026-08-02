@@ -22,4 +22,4 @@ jobs:
         with:
           terraform_version: 1.15.3
       - name: Run local-only validation
-        run: ./scripts/validate.sh
+        run: ./scripts/bash/validate.sh

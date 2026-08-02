@@ -1,21 +1,40 @@
-# Demo_Service SLO rules
+# Demo Service SLO Rules
 
-This directory defines the Demo_Service success-ratio SLO, recording rules, error budget, and multi-window burn-rate alerts. The default target and rolling window are documented in `demo-service-slo.yaml`; the test fixture is `demo-service-slo-test.yaml`.
+This directory defines the Demo Service's Service Level Objective: a success-ratio SLO with recording rules, error budget calculations, and multi-window burn-rate alerts. The SLO target and rolling window are documented in `demo-service-slo.yaml`, and the test fixture lives in `demo-service-slo-test.yaml`.
 
-## Rule contract
+## What the rules do
 
-The success SLI must distinguish successful and failed HTTP requests using stable service/status labels. Long- and short-window alerts must identify the service/SLO, use explicit thresholds and evaluation windows, and route to the configured notification path. Missing or insufficient telemetry must evaluate as unknown and must not be reported compliant.
+The success SLI distinguishes between successful and failed HTTP requests using stable service and status labels. From that raw signal, the recording rules calculate the SLO attainment over the rolling window.
 
-## Validation
+The burn-rate alerts use a multi-window approach: long and short evaluation windows detect both sustained degradation and sudden failures. Each alert identifies the affected service and SLO, uses explicit thresholds and evaluation windows, and routes to the configured notification path.
 
-From `driftguard-gitops/`:
+One critical rule: when telemetry is missing or insufficient, the SLO must evaluate as "unknown." Unknown is never reported as compliant.
 
-```powershell
+## Running validation
+
+When `promtool` is installed:
+
+```bash
 promtool test rules observability/slo/demo-service-slo-test.yaml
 ```
 
-The command is cluster-independent but requires `promtool`. Also run YAML parsing, GitOps tests, and secret scanning. A passing fixture proves expression behavior for the supplied series; it does not prove Prometheus ingestion, Alertmanager delivery, or Grafana rendering.
+This command is cluster-independent and proves that the recording rule expressions produce correct results for the supplied test series. It does not prove Prometheus ingestion, Alertmanager delivery, or Grafana rendering, so runtime testing in a cluster is still needed.
 
-## Change checklist
+Also run the standard checks:
 
-When changing metric names, labels, windows, targets, or alert thresholds, update the Demo_Service instrumentation, recording rules, AnalysisTemplates, dashboard panels, and test fixture together. Document alert routing and validate both clean and breaching series.
+```bash
+python -m pytest tests -q
+python scripts/scan_no_plaintext_secrets.py .
+```
+
+## Coordinating changes
+
+SLO rules do not exist in isolation. If you change a metric name, label, window, target, or alert threshold, you need to update all of the following together:
+
+- Demo Service instrumentation code (the source of the metrics)
+- Recording rules in this directory
+- Analysis templates in `rollouts/`
+- Dashboard panels in `observability/dashboards/`
+- The test fixture (`demo-service-slo-test.yaml`)
+
+Document the alert routing configuration and validate with both clean (happy path) and breaching (failure path) test series.

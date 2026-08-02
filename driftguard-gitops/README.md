@@ -1,44 +1,68 @@
-# DriftGuard Config_Repo
+# DriftGuard Config Repo
 
-This repository is the declarative Layer B control plane. ArgoCD pulls it and reconciles Kubernetes state; Terraform only installs ArgoCD and seeds the Root_Application.
+This is the declarative control plane for everything running inside Kubernetes. ArgoCD continuously pulls from this repository and reconciles cluster state to match what is declared here. Terraform only installs ArgoCD and seeds the Root Application; after that, this repo is the single source of truth for the cluster.
 
-## Ownership boundary
+If you want to change what is running in the cluster, you change it here in Git. ArgoCD takes care of the rest.
 
-- `bootstrap/` contains the Root_Application and its direct child Applications.
-- `projects/` defines AppProject source, destination, and resource boundaries plus ArgoCD configuration/RBAC.
-- `applicationsets/` generates pinned Helm Applications and environment workload Applications.
-- `addons/` contains add-on-owned manifests such as the Karpenter NodePool.
-- `policies/` contains Gatekeeper templates and constraints.
-- `observability/` contains collectors, dashboards, SLO rules, and chart-owned configuration.
-- `secrets/` contains references only: SecretStore and ExternalSecret objects, never secret values.
-- `workloads/` contains Kustomize bases and environment overlays for deployable services.
-- `optional/` contains features deliberately outside the default Root_Application path, including Crossplane.
+## How the ownership boundary works
 
-## ArgoCD invariants
+Each directory in this repository serves a specific role in the GitOps delivery model:
 
-Every Application uses an approved default-deny AppProject. Source repositories, destination namespaces, and allowed cluster resources are explicit. Automated pruning is disabled by default; intentional pruning requires the per-Application approval marker checked by `conformance/argocd.rego`.
+| Path | What it controls |
+|---|---|
+| `bootstrap/` | Root Application and its direct child Applications (the ArgoCD discovery tree) |
+| `projects/` | AppProject security boundaries, ArgoCD declarative configuration, and RBAC |
+| `applicationsets/` | Templated Application generators for add-ons, observability, and workloads |
+| `addons/` | Platform add-on manifests like Karpenter NodePool configuration |
+| `policies/` | Gatekeeper ConstraintTemplates and Constraints for admission control |
+| `observability/` | Collectors, dashboards, SLO recording rules, and chart-owned config |
+| `secrets/` | SecretStore and ExternalSecret references only (never actual secret values) |
+| `workloads/` | Kustomize bases and environment overlays for deployable services |
+| `rollouts/` | Argo Rollouts analysis templates for progressive delivery |
+| `optional/` | Features outside the default Root Application path (e.g., Crossplane) |
+| `conformance/` | Offline policy tests and invariant rules for pre-merge validation |
+| `scripts/` | Secret scanner and validation utilities |
+| `tests/` | Automated test suite (see `tests/README.md`) |
 
-Use sync waves to express dependency order. Keep `selfHeal`, retry limit 5, and `CreateNamespace=true` where appropriate. Do not use a direct `kubectl apply` workflow for normal delivery. Change Git, let ArgoCD reconcile, and inspect Application history/status.
+## ArgoCD safety invariants
+
+The platform enforces several non-negotiable rules:
+
+- Every Application uses an approved, default-deny AppProject. Source repos, destination namespaces, and allowed cluster resources are explicitly enumerated.
+- Automated pruning is disabled by default. Intentional pruning requires the per-Application annotation `driftguard.io/prune-approved: "true"`, which is checked by the conformance policy.
+- Sync waves express dependency order (controllers before dependents, CRDs before instances).
+- Self-heal and retry (limit 5) keep Applications converging. `CreateNamespace=true` is used where appropriate.
+- The normal delivery mechanism is always "change Git, let ArgoCD reconcile." Direct `kubectl apply` is not part of the standard workflow.
 
 ## Pinned dependencies
 
-Third-party chart versions are recorded in `versions.yaml` and repeated in Application/ApplicationSet sources because ArgoCD consumes those declarations directly. Never replace a tested version with `latest`, a floating branch, or an unreviewed chart repository.
+Third-party chart versions are recorded in `versions.yaml` and repeated in Application/ApplicationSet source declarations (ArgoCD reads these directly). Never replace a tested version with `latest`, a floating branch, or an unreviewed chart repository.
 
-## Local checks
+## Running local checks
 
-From this directory:
+From this directory, you can run the secret scanner and the test suite without any cluster access:
 
-```powershell
+```bash
 python scripts/scan_no_plaintext_secrets.py .
 python -m pytest tests -q
 ```
 
-When installed, also run conftest over policy inputs and kubeconform over every YAML document. `promtool test rules observability/slo/demo-service-slo-test.yaml` validates the SLO fixture. YAML parsing and repository tests do not prove controller runtime behavior.
+When the tools are installed, you can also run:
+
+```bash
+conftest test --policy conformance .
+kubeconform -strict -summary <yaml-files>
+promtool test rules observability/slo/demo-service-slo-test.yaml
+```
+
+Keep in mind that YAML parsing and repository tests validate structure and safety rules, but they do not prove controller runtime behavior. You need a real cluster for that.
 
 ## Release and rollback
 
-CI updates image tags through a Config_Repo commit after tests, image scanning, and ECR publication succeed. To roll back, revert the desired Git commit or image tag and let ArgoCD reconcile; do not patch the live workload as the normal recovery mechanism. For a failed sync, preserve the Application status and history before changing the desired state.
+CI updates image tags through a Config Repo commit after tests, image scanning, and ECR publication succeed. The flow is: source tests pass, image is scanned, image is pushed to ECR with the full commit SHA as the tag, then the tag is committed here.
 
-## Deployment blockers
+To roll back, revert the Git commit or image tag and let ArgoCD reconcile. Do not patch the live workload directly as a recovery mechanism. For a failed sync, preserve the Application status and history before changing the desired state.
 
-Replace `your-org` repository URLs, example domains, account IDs, and placeholder ACM/IRSA values before bootstrapping. Crossplane remains disabled until both optional Application manifests are deliberately promoted into the Root_Application child path.
+## Before your first deployment
+
+Replace all `your-org` repository URLs, example domains, account IDs, and placeholder ACM/IRSA values before bootstrapping. Crossplane remains disabled until its Application manifests are deliberately promoted into the `bootstrap/children/` path.
