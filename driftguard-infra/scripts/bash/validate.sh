@@ -10,7 +10,7 @@ require_command() {
   }
 }
 
-for cmd in terraform python tflint tfsec checkov conftest kubeconform; do
+for cmd in terraform python tflint tfsec checkov conftest; do
   require_command "$cmd"
 done
 
@@ -29,6 +29,7 @@ if conftest test --all-namespaces --policy "$ROOT/policies" "$ROOT/policies/test
 fi
 GITOPS_DIR="$ROOT/../driftguard-gitops"
 if [ -d "$GITOPS_DIR" ]; then
+  require_command kubeconform
   find "$GITOPS_DIR" -type f \( -name '*.yaml' -o -name '*.yml' \) \
     ! -path '*/.github/*' \
     ! -name 'versions.yaml' \
