@@ -1,0 +1,13 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - serviceaccount.yaml
+  - service.yaml
+  - service-canary.yaml
+  - ingress.yaml
+  - rollout.yaml
+  - ../../../rollouts/analysis-templates.yaml
+commonLabels:
+  app.kubernetes.io/part-of: driftguard
+  Project: DriftGuard
+  ManagedBy: ArgoCD

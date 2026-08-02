@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: demo-service-canary
+  labels:
+    app.kubernetes.io/name: demo-service
+    app.kubernetes.io/part-of: driftguard
+spec:
+  selector:
+    app.kubernetes.io/name: demo-service
+  ports:
+    - name: http
+      port: 80
+      targetPort: http

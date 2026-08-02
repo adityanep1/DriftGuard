@@ -1,0 +1,31 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: demo-service-bluegreen-example
+  labels:
+    app.kubernetes.io/name: demo-service-bluegreen-example
+    app.kubernetes.io/part-of: driftguard
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: demo-service-bluegreen-example
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: demo-service-bluegreen-example
+        app.kubernetes.io/part-of: driftguard
+    spec:
+      serviceAccountName: demo-service
+      containers:
+        - name: demo-service
+          image: ghcr.io/your-org/demo-service:REPLACE_WITH_COMMIT_SHA
+          ports:
+            - name: http
+              containerPort: 8080
+  strategy:
+    blueGreen:
+      activeService: demo-service
+      previewService: demo-service-preview
+      autoPromotionEnabled: false
+      scaleDownDelaySeconds: 30
