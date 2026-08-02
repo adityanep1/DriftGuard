@@ -1,0 +1,50 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: demo-service
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "30"
+spec:
+  goTemplate: true
+  goTemplateOptions:
+    - missingkey=error
+  generators:
+    - list:
+        elements:
+          - name: demo-service-dev
+            path: workloads/demo-service/overlays/dev
+            namespace: demo-dev
+          - name: demo-service-staging
+            path: workloads/demo-service/overlays/staging
+            namespace: demo-staging
+          - name: demo-service-prod
+            path: workloads/demo-service/overlays/prod
+            namespace: demo-prod
+  template:
+    metadata:
+      name: '{{.name}}'
+      namespace: argocd
+      annotations:
+        argocd.argoproj.io/sync-wave: "30"
+    spec:
+      project: workloads
+      source:
+        repoURL: https://github.com/your-org/driftguard-gitops.git
+        targetRevision: main
+        path: '{{.path}}'
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: '{{.namespace}}'
+      syncPolicy:
+        automated:
+          selfHeal: true
+          prune: false
+        syncOptions:
+          - CreateNamespace=true
+        retry:
+          limit: 5
+          backoff:
+            duration: 5s
+            factor: 2
+            maxDuration: 300s

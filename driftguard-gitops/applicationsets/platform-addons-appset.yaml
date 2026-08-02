@@ -1,0 +1,77 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: platform-addons
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+spec:
+  goTemplate: true
+  goTemplateOptions:
+    - missingkey=error
+  generators:
+    - list:
+        elements:
+          - name: argo-rollouts
+            repoURL: https://argoproj.github.io/argo-helm
+            chart: argo-rollouts
+            version: "2.37.8"
+            namespace: argo-rollouts
+            wave: "10"
+          - name: aws-load-balancer-controller
+            repoURL: https://aws.github.io/eks-charts
+            chart: aws-load-balancer-controller
+            version: "1.8.3"
+            namespace: aws-load-balancer-controller
+            wave: "10"
+          - name: external-secrets
+            repoURL: https://charts.external-secrets.io
+            chart: external-secrets
+            version: "0.10.0"
+            namespace: external-secrets
+            wave: "10"
+          - name: gatekeeper
+            repoURL: https://open-policy-agent.github.io/gatekeeper/charts
+            chart: gatekeeper
+            version: "3.16.3"
+            namespace: gatekeeper-system
+            wave: "10"
+          - name: karpenter
+            repoURL: oci://public.ecr.aws/karpenter
+            chart: karpenter
+            version: "1.0.6"
+            namespace: karpenter
+            wave: "5"
+  template:
+    metadata:
+      name: '{{.name}}'
+      namespace: argocd
+      annotations:
+        argocd.argoproj.io/sync-wave: '{{.wave}}'
+    spec:
+      project: platform-addons
+      source:
+        repoURL: '{{.repoURL}}'
+        chart: '{{.chart}}'
+        targetRevision: '{{.version}}'
+        helm:
+          releaseName: '{{.name}}'
+          values: |
+            {{- if eq .name "gatekeeper" }}
+            validatingWebhookFailurePolicy: Fail
+            {{- end }}
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: '{{.namespace}}'
+      syncPolicy:
+        automated:
+          selfHeal: true
+          prune: false
+        syncOptions:
+          - CreateNamespace=true
+        retry:
+          limit: 5
+          backoff:
+            duration: 5s
+            factor: 2
+            maxDuration: 300s
