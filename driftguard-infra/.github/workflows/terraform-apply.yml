@@ -1,0 +1,44 @@
+name: terraform-apply
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '**/*.tf'
+      - '**/*.tfvars'
+  #checkov:skip=CKV_GHA_7:The explicit environment selector is an intentional guardrail for the manually approved per-environment Terraform apply path.
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Environment to apply
+        required: true
+        type: choice
+        options: [dev, staging, prod]
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  TARGET_ENV: ${{ github.event.inputs.environment || 'dev' }}
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment || 'dev' }}
+    defaults:
+      run:
+        working-directory: live/${{ github.event.inputs.environment || 'dev' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.15.3
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.TERRAFORM_APPLY_ROLE_ARN }}
+          aws-region: us-east-1
+      - run: terraform init -input=false
+      - run: terraform validate
+      - name: Apply only the selected environment
+        run: terraform apply -input=false -auto-approve

@@ -1,0 +1,25 @@
+name: terraform-validate
+
+on:
+  pull_request:
+    paths:
+      - '**/*.tf'
+      - '**/*.tfvars'
+      - 'policies/**'
+      - 'scripts/**'
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.15.3
+      - name: Run local-only validation
+        run: ./scripts/validate.sh

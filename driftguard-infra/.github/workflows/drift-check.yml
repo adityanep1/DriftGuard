@@ -1,0 +1,49 @@
+name: terraform-drift-check
+
+on:
+  schedule:
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  drift:
+    strategy:
+      fail-fast: false
+      matrix:
+        environment: [dev, staging, prod]
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: live/${{ matrix.environment }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.15.3
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.TERRAFORM_DRIFT_ROLE_ARN }}
+          aws-region: us-east-1
+      - run: terraform init -input=false
+      - name: Map Terraform detailed exit code
+        id: drift
+        shell: bash
+        run: |
+          set +e
+          terraform plan -input=false -detailed-exitcode -no-color 2>&1 | tee drift.log
+          exit_code=${PIPESTATUS[0]}
+          case "$exit_code" in
+            0) echo "status=no-drift" >> "$GITHUB_OUTPUT"; exit 0 ;;
+            2) echo "status=drift-detected" >> "$GITHUB_OUTPUT"; exit 2 ;;
+            *) echo "status=check-failed" >> "$GITHUB_OUTPUT"; exit 1 ;;
+          esac
+      - name: Upload drift report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: drift-${{ matrix.environment }}
+          path: live/${{ matrix.environment }}/drift.log
