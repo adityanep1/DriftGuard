@@ -1,0 +1,8 @@
+{
+  "resource_changes": [
+    {"address": "aws_iam_role.irsa[\"bad\"]", "type": "aws_iam_role", "change": {"after": {"assume_role_policy": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Action\":\"sts:AssumeRoleWithWebIdentity\",\"Principal\":{\"Federated\":\"arn:aws:iam::123456789012:oidc-provider/example\"},\"Condition\":{\"StringEquals\":{\"example:sub\":[\"system:serviceaccount:platform:one\",\"system:serviceaccount:platform:two\"]}}}]}"}}},
+    {"address": "aws_iam_role_policy.bad", "type": "aws_iam_role_policy", "change": {"after": {"policy": "{\"Statement\":[{\"Action\":\"*\",\"Resource\":\"*\"}]}"}}},
+    {"address": "aws_ecr_repository.bad", "type": "aws_ecr_repository", "change": {"after": {"encryption_configuration": [{}], "image_scanning_configuration": [{"scan_on_push": false}], "tags": {"Environment": "dev", "Project": "driftguard", "ManagedBy": "terraform"}}}},
+    {"address": "aws_ecr_lifecycle_policy.bad", "type": "aws_ecr_lifecycle_policy", "change": {"after": {"policy": "{\"rules\":[{\"selection\":{\"tagStatus\":\"tagged\"}}]}"}}}
+  ]
+}

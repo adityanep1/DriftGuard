@@ -1,0 +1,30 @@
+{
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "version_constraint": "~> 5.0"
+      }
+    }
+  },
+  "required_providers": [
+    {"name": "aws", "version_constraint": "~> 5.0"}
+  ],
+  "environments": [
+    {"name": "dev", "backend_key": "env/dev/terraform.tfstate"},
+    {"name": "staging", "backend_key": "env/staging/terraform.tfstate"},
+    {"name": "prod", "backend_key": "env/prod/terraform.tfstate"}
+  ],
+  "resource_changes": [
+    {"address": "aws_vpc.this", "type": "aws_vpc", "change": {"after": {"tags": {"Environment": "dev", "Project": "driftguard", "ManagedBy": "terraform"}}}},
+    {"address": "aws_subnet.private[0]", "type": "aws_subnet", "change": {"after": {"id": "subnet-private-a", "tags": {"Environment": "dev", "Project": "driftguard", "ManagedBy": "terraform", "kubernetes.io/role/internal-elb": "1"}}}},
+    {"address": "aws_subnet.private[1]", "type": "aws_subnet", "change": {"after": {"id": "subnet-private-b", "tags": {"Environment": "dev", "Project": "driftguard", "ManagedBy": "terraform", "kubernetes.io/role/internal-elb": "1"}}}},
+    {"address": "aws_eks_cluster.this", "type": "aws_eks_cluster", "change": {"after": {"version": "1.30", "encryption_config": [{"resources": ["secrets"], "provider": [{"key_arn": "arn:aws:kms:us-east-1:123456789012:key/example"}]}], "tags": {"Environment": "dev", "Project": "driftguard", "ManagedBy": "terraform"}}}},
+    {"address": "aws_eks_node_group.this[\"default\"]", "type": "aws_eks_node_group", "change": {"after": {"subnet_ids": ["subnet-private-a", "subnet-private-b"], "tags": {"Environment": "dev", "Project": "driftguard", "ManagedBy": "terraform"}}}},
+    {"address": "aws_iam_role.irsa[\"demo\"]", "type": "aws_iam_role", "change": {"after": {"assume_role_policy": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Action\":\"sts:AssumeRoleWithWebIdentity\",\"Principal\":{\"Federated\":\"arn:aws:iam::123456789012:oidc-provider/oidc.eks.us-east-1.amazonaws.com/id/example\"},\"Condition\":{\"StringEquals\":{\"oidc.eks.us-east-1.amazonaws.com/id/example:sub\":\"system:serviceaccount:platform:demo\",\"oidc.eks.us-east-1.amazonaws.com/id/example:aud\":\"sts.amazonaws.com\"}}}]}", "tags": {"Environment": "dev", "Project": "driftguard", "ManagedBy": "terraform"}}}},
+    {"address": "aws_iam_role_policy.permissions[\"demo\"]", "type": "aws_iam_role_policy", "change": {"after": {"policy": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Action\":[\"logs:CreateLogStream\"],\"Resource\":[\"*\"]}]}"}}},
+    {"address": "aws_ecr_repository.service[\"demo\"]", "type": "aws_ecr_repository", "change": {"after": {"encryption_configuration": [{"encryption_type": "AES256"}], "image_scanning_configuration": [{"scan_on_push": true}], "tags": {"Environment": "dev", "Project": "driftguard", "ManagedBy": "terraform"}}}},
+    {"address": "aws_ecr_lifecycle_policy.service[\"demo\"]", "type": "aws_ecr_lifecycle_policy", "change": {"after": {"policy": "{\"rules\":[{\"selection\":{\"tagStatus\":\"untagged\"}}]}"}}}
+  ],
+  "security_group_rules": []
+}
