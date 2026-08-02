@@ -1,0 +1,125 @@
+name: demo-service-ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  AWS_REGION: us-east-1
+  ECR_REPOSITORY: driftguard-dev/demo-service
+  IMAGE_TAG: ${{ github.sha }}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+          cache: pip
+      - run: pip install -r requirements.txt pytest
+      - name: Run tests
+        run: pytest --junitxml=test-results.xml
+      - name: Publish test report
+        if: always()
+        uses: mikepenz/action-junit-report@v5
+        with:
+          report_paths: '**/test-results.xml'
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build image
+        run: docker build --tag "$ECR_REPOSITORY:$IMAGE_TAG" .
+      - name: Export image
+        run: docker save "$ECR_REPOSITORY:$IMAGE_TAG" --output image.tar
+      - uses: actions/upload-artifact@v4
+        with:
+          name: demo-image
+          path: image.tar
+          retention-days: 1
+
+  scan:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: demo-image
+      - run: docker load --input image.tar
+      - name: Scan image
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: ${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
+          format: table
+          severity: HIGH,CRITICAL
+          exit-code: '1'
+          ignore-unfixed: true
+
+  publish:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [build, scan]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: demo-image
+      - run: docker load --input image.tar
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.ECR_PUBLISH_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+      - id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+      - name: Push immutable commit tag with retries
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        run: |
+          set -euo pipefail
+          image="$REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+          docker tag "$ECR_REPOSITORY:$IMAGE_TAG" "$image"
+          for attempt in 1 2 3; do
+            if docker push "$image"; then exit 0; fi
+            sleep $((attempt * 10))
+          done
+          echo 'ECR push failed after 3 attempts' >&2
+          exit 1
+
+  update-gitops:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: publish
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: your-org/driftguard-gitops
+          path: config-repo
+          token: ${{ secrets.CONFIG_REPO_TOKEN }}
+      - name: Update desired image tag only
+        env:
+          SHA: ${{ github.sha }}
+        run: |
+          for path in config-repo/workloads/demo-service/overlays/*/kustomization.yaml; do
+            pushd "$(dirname "$path")" > /dev/null
+            kustomize edit set image "ghcr.io/your-org/demo-service=*:${SHA}"
+            popd > /dev/null
+          done
+      - name: Commit GitOps change
+        working-directory: config-repo
+        run: |
+          set -euo pipefail
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add workloads/demo-service/overlays
+          git diff --cached --quiet && { echo 'No image tag change'; exit 0; }
+          git commit -m "chore: deploy demo-service ${{ github.sha }}"
+          git push origin HEAD:main
