@@ -2,7 +2,7 @@
   "id": "FEAT-002",
   "type": "docs",
   "description": "Add missing READMEs and rewrite all existing READMEs with warm, detailed, human tone. No em dashes anywhere.",
-  "status": "in_progress",
+  "status": "completed",
   "steps": [
     "Create driftguard-gitops/projects/README.md explaining the AppProject security model: what each project file does (platform-addons, observability, security, workloads), the default-deny principle, source/destination/resource boundaries, RBAC config, and ArgoCD declarative configuration. Reference the actual files: platform-addons.yaml, observability.yaml, security.yaml, workloads.yaml, argocd-config.yaml, argocd-rbac.yaml.",
     "Create driftguard-gitops/tests/README.md explaining the test suite: test_argocd_invariants.py (property-based testing of pruning safety and project binding), test_no_plaintext_secrets.py (scanner verification), test_rollouts_manifests.py (rollout/analysis template validation). Include how to run tests, prerequisites, and what each test covers.",
@@ -55,5 +55,5 @@
     "Run: cd /projects/sandbox/DriftGuard/demo-service && python -m pytest tests/ -v"
   ],
   "blocked_reason": null,
-  "findings": ""
+  "findings": "All 38 tests pass (24 infra + 10 gitops + 4 demo-service). Zero em dashes in any project file (only .agents/ internal review docs have them, which are not part of the deliverable). Created 3 new READMEs and rewrote all 28 existing ones."
 }
