@@ -1,0 +1,47 @@
+apiVersion: templates.gatekeeper.sh/v1
+kind: ConstraintTemplate
+metadata:
+  name: k8sbaseline
+spec:
+  crd:
+    spec:
+      names:
+        kind: K8sBaseline
+      validation:
+        openAPIV3Schema:
+          type: object
+          properties:
+            requiredLabels:
+              type: array
+              items:
+                type: string
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package k8sbaseline
+
+        violation[{"msg": msg}] {
+          input.review.object.spec.containers[_].securityContext.privileged == true
+          msg := "privileged containers are not permitted"
+        }
+
+        violation[{"msg": "host namespaces are not permitted"}] {
+          object := input.review.object
+          object.spec.hostPID == true
+        }
+
+        violation[{"msg": "host namespaces are not permitted"}] {
+          object := input.review.object
+          object.spec.hostIPC == true
+        }
+
+        violation[{"msg": "host namespaces are not permitted"}] {
+          object := input.review.object
+          object.spec.hostNetwork == true
+        }
+
+        violation[{"msg": msg}] {
+          required := input.parameters.requiredLabels[_]
+          not input.review.object.metadata.labels[required]
+          msg := sprintf("required label %s is missing", [required])
+        }
