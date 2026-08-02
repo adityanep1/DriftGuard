@@ -27,12 +27,17 @@ if conftest test --all-namespaces --policy "$ROOT/policies" "$ROOT/policies/test
   echo 'Expected invalid security fixture to fail conformance' >&2
   exit 1
 fi
-find "$ROOT/../driftguard-gitops" -type f \( -name '*.yaml' -o -name '*.yml' \) \
-  ! -path '*/.github/*' \
-  ! -name 'versions.yaml' \
-  ! -name 'demo-service-slo-rules.yaml' \
-  ! -name 'demo-service-slo-test.yaml' \
-  ! -name '.pre-commit-config.yaml' \
-  ! -name 'kustomization.yaml' \
-  -print0 | xargs -0 -r kubeconform -strict -ignore-missing-schemas -summary
+GITOPS_DIR="$ROOT/../driftguard-gitops"
+if [ -d "$GITOPS_DIR" ]; then
+  find "$GITOPS_DIR" -type f \( -name '*.yaml' -o -name '*.yml' \) \
+    ! -path '*/.github/*' \
+    ! -name 'versions.yaml' \
+    ! -name 'demo-service-slo-rules.yaml' \
+    ! -name 'demo-service-slo-test.yaml' \
+    ! -name '.pre-commit-config.yaml' \
+    ! -name 'kustomization.yaml' \
+    -print0 | xargs -0 -r kubeconform -strict -ignore-missing-schemas -summary
+else
+  echo "Skipping kubeconform: driftguard-gitops directory not found alongside driftguard-infra"
+fi
 echo 'Validation completed without applying infrastructure or contacting AWS.'

@@ -1,4 +1,4 @@
-# Design Document: DriftGuard — GitOps Infrastructure Automation Platform
+# Design Document: DriftGuard  -  GitOps Infrastructure Automation Platform
 
 ## Overview
 
@@ -8,13 +8,13 @@ from version-controlled desired state is detected and, where configured, self-he
 
 The platform is built on a **two-layer control model**:
 
-- **Layer A — Imperative provisioning (Terraform, "day 0/1").** Terraform creates the AWS substrate
+- **Layer A  -  Imperative provisioning (Terraform, "day 0/1").** Terraform creates the AWS substrate
   that cannot bootstrap itself from inside Kubernetes: VPC/networking, the EKS control plane and node
   groups, IAM/IRSA, ECR, Route53/ACM, the S3+DynamoDB state backend, and the *one-time install* of the
   in-cluster GitOps controller (ArgoCD) via the Helm provider. Terraform runs from CI or an operator
   workstation and is applied per environment. (Requirements 1, 2, 4, 5, 6, 7, 8, 9, 24, 26)
 
-- **Layer B — Declarative reconciliation (ArgoCD, "day 2").** Once ArgoCD exists, *everything else*
+- **Layer B  -  Declarative reconciliation (ArgoCD, "day 2").** Once ArgoCD exists, *everything else*
   (platform add-ons, policies, observability, progressive-delivery controllers, and the demo workload)
   is delivered by ArgoCD pulling desired state from the `Config_Repo`. ArgoCD continuously compares live
   state to Git and converges the two. Humans and CI never `kubectl apply` to the cluster; they change Git.
@@ -31,7 +31,7 @@ single most important architectural decision in the platform (see ADR-004).
 | --- | --- |
 | Reproducible from an empty AWS account, fully documented, version-pinned | R27 |
 | Continuous drift detection + opt-in self-heal as the core behavior | R11, R13 |
-| Pull-based delivery boundary — no direct cluster mutation from CI | R16.4, R25.5 |
+| Pull-based delivery boundary  -  no direct cluster mutation from CI | R16.4, R25.5 |
 | Least-privilege everywhere (IRSA, IAM, ArgoCD RBAC/Projects) | R7, R14, R24 |
 | Safe, ordered, non-destructive syncs (waves, opt-in prune) | R12, R13 |
 | Safe releases with automated rollback | R18 |
@@ -78,11 +78,11 @@ so UI rendering is out of scope for testing.
 
 ## Architecture
 
-### C4 Level 1 — System Context
+### C4 Level 1  -  System Context
 
 ```mermaid
 C4Context
-    title DriftGuard — System Context
+    title DriftGuard  -  System Context
     Person(op, "Platform Engineer (Operator)", "Changes desired state via Git PRs; observes via Grafana/ArgoCD UI")
     Person(dev, "Developer", "Pushes Demo_Service code")
 
@@ -109,11 +109,11 @@ C4Context
     Rel(op, argo, "observe (read-only UI)")
 ```
 
-### C4 Level 2 — Container View (in-cluster)
+### C4 Level 2  -  Container View (in-cluster)
 
 ```mermaid
 C4Container
-    title DriftGuard — Container View
+    title DriftGuard  -  Container View
     System_Boundary(eks, "EKS Cluster (private node groups)") {
         Container(argocd, "ArgoCD", "Helm", "app-of-apps root, ApplicationSets, sync/self-heal")
         Container(rollouts, "Argo Rollouts", "Helm", "canary + blue-green, metric analysis")
@@ -238,7 +238,7 @@ driftguard-infra/
 │   │   ├── terraform.tfvars       #   dev sizing: min/max/desired nodes, max node cap (R2.2, R3.5)
 │   │   └── providers.tf           #   AWS provider ~> 5.0, all providers pinned (R8.2)
 │   ├── staging/                   #   same shape, staging sizing
-│   └── prod/                      #   same shape, prod sizing (1 NAT per AZ — R1.5)
+│   └── prod/                      #   same shape, prod sizing (1 NAT per AZ  -  R1.5)
 ├── policies/                      # tfsec/Checkov config + custom conftest rego for plan JSON (R24)
 ├── .github/workflows/             # (see CI/CD design) terraform-plan, terraform-apply, drift-check
 └── versions.tf                    # shared required_version + provider constraints
@@ -269,7 +269,7 @@ driftguard-gitops/
 │   ├── observability.yaml
 │   ├── security.yaml
 │   └── workloads.yaml
-├── applicationsets/               # generators — one App per target from a shared template (R10.2)
+├── applicationsets/               # generators  -  one App per target from a shared template (R10.2)
 │   ├── platform-addons-appset.yaml
 │   └── workloads-appset.yaml
 ├── addons/                        # platform add-ons as Helm/Kustomize (delivered by ArgoCD)
@@ -293,7 +293,7 @@ driftguard-gitops/
 │   └── demo-service/
 │       ├── base/                  # Kustomize base: Rollout, Service, Ingress, ServiceAccount
 │       └── overlays/{dev,staging,prod}/   # per-env overlays incl. image tag (R16.1) & IRSA annotation
-├── secrets/                       # ONLY ExternalSecret refs + SecretStore — never plaintext (R23.3)
+├── secrets/                       # ONLY ExternalSecret refs + SecretStore  -  never plaintext (R23.3)
 └── rollouts/                      # AnalysisTemplates (error-rate, p95 latency) (R18.4)
 ```
 
@@ -352,9 +352,9 @@ flowchart TB
 - OIDC provider enabled for IRSA (R2.3).
 - Public API endpoint restricted to a CIDR allowlist; `0.0.0.0/0` forbidden (R2.4, R2.5).
 - Outputs: `cluster_endpoint`, `cluster_ca_data`, `oidc_provider_arn`, `oidc_issuer_url` (R2.6). On
-  create failure, no connection outputs are produced (R2.7 — natural Terraform behavior; asserted in tests).
+  create failure, no connection outputs are produced (R2.7  -  natural Terraform behavior; asserted in tests).
 
-**Node autoscaling — Karpenter (ADR-001).** Karpenter is chosen over Cluster Autoscaler for faster,
+**Node autoscaling  -  Karpenter (ADR-001).** Karpenter is chosen over Cluster Autoscaler for faster,
 bin-packed provisioning and native consolidation.
 
 | Behavior | Mechanism | Requirement |
@@ -420,7 +420,7 @@ sequenceDiagram
 #### 1.7 Provider pinning & tagging (R8, R24)
 
 - `required_version` set; AWS provider `~> 5.0`; every provider pinned (R8.2). A missing constraint fails
-  before apply (R8.3 — enforced by a CI conformance check).
+  before apply (R8.3  -  enforced by a CI conformance check).
 - Exactly `Environment`, `Project`, `ManagedBy` applied to every taggable resource via provider
   `default_tags` **and** verified by a conformance check over plan JSON (R8.7, R8.8). Cost-allocation tags
   (Environment, Project) are a subset (R26.4).
@@ -434,7 +434,7 @@ sequenceDiagram
   install is reported failed with the unhealthy component and the Root_Application is **not** created (R9.5).
 - A `Root_Application` (app-of-apps) is seeded pointing at `Config_Repo/bootstrap/root-app.yaml` (R9.2).
 - Root_Application discovers and creates all children within ≤180s (R9.3).
-- ArgoCD's own config is declarative state in the Config_Repo — ArgoCD manages ArgoCD (R9.4).
+- ArgoCD's own config is declarative state in the Config_Repo  -  ArgoCD manages ArgoCD (R9.4).
 - Unreachable repo or invalid child → Root_Application `Degraded`, error reported, existing children
   untouched (R9.6).
 
@@ -491,7 +491,7 @@ outcome (R13.4). Prune is never enabled at a global/default scope (R13.5).
 
 ### 3. CI/CD Design (GitHub Actions)
 
-All AWS access from CI uses **GitHub OIDC federation** to assume short-lived IAM roles — no long-lived
+All AWS access from CI uses **GitHub OIDC federation** to assume short-lived IAM roles  -  no long-lived
 access keys are stored (R24.4 spirit; enforced as a decision). The delivery boundary is strict: **CI never
 runs `kubectl apply`** against the cluster (R16.4, R25.5).
 
@@ -589,7 +589,7 @@ flowchart LR
 
 ### 6. Security & Policy Design (R21–R24)
 
-#### 6.1 Admission control — OPA/Gatekeeper (R21)
+#### 6.1 Admission control  -  OPA/Gatekeeper (R21)
 
 - Gatekeeper deployed as add-on; Healthy/Ready ≤600s or reported failed (R21.1).
 - Baseline `ConstraintTemplates` + `Constraints`: block privileged containers (R21.2), block host
@@ -597,13 +597,13 @@ flowchart LR
 - Compliant workloads admitted (R21.4). Policies are declarative in Config_Repo; changes reconcile ≤180s
   (R21.5). Evaluation failure → reject admission (fail-closed) and report (R21.6).
 
-#### 6.2 Runtime security — Falco (R22)
+#### 6.2 Runtime security  -  Falco (R22)
 
 - Falco DaemonSet as add-on; Healthy/Ready ≤600s (R22.1) or reported failed with component (R22.4).
 - Matching activity → alert identifying rule/workload/severity ≤30s (R22.2); forwarded to Observability_Stack
   ≤30s (R22.3). Forward failure retries ×3, retains the alert, reports after exhaustion (R22.5).
 
-#### 6.3 Secrets — External Secrets Operator (R23) (ADR-002)
+#### 6.3 Secrets  -  External Secrets Operator (R23) (ADR-002)
 
 - ESO deployed on cluster provision; ready ≤300s (R23.1). Materializes K8s Secrets from AWS Secrets Manager
   ≤60s of deployment request (R23.2). Config_Repo stores only references/ciphertext; plaintext commits/applies
@@ -619,7 +619,7 @@ flowchart LR
 
 ### 7. Demo Service Design (R25)
 
-- A small **FastAPI** microservice (Python) — chosen for concise OTel auto-instrumentation and a native
+- A small **FastAPI** microservice (Python)  -  chosen for concise OTel auto-instrumentation and a native
   Prometheus exporter.
 
 ```text
@@ -636,7 +636,7 @@ demo-service/
 - `/healthz`: returns success ≤2s when ready (R25.2); returns not-ready failure status when not ready, never
   falsely reporting ready (R25.3). Wired to the Rollout/Deployment readiness probe.
 - `/metrics`: Prometheus exposition format ≤2s (R25.6).
-- Deployed **only** via ArgoCD reconciliation of the Config_Repo (R25.4, R25.5) — never by direct apply.
+- Deployed **only** via ArgoCD reconciliation of the Config_Repo (R25.4, R25.5)  -  never by direct apply.
 - The Dockerfile runs as non-root with no privileged flags and carries required labels so it passes admission
   (R21.2, R21.3).
 
@@ -686,7 +686,7 @@ inputs that conformance tests reason over. These schemas are what the Correctnes
 ### Terraform inputs (per environment)
 
 ```hcl
-# live/<env>/terraform.tfvars — conceptual schema
+# live/<env>/terraform.tfvars  -  conceptual schema
 environment          = "dev|staging|prod"      # R8.4
 project              = "driftguard"            # tag value R8.7
 kubernetes_version   = "1.30"                  # explicit minor, no 'latest' (R2.1)
@@ -713,7 +713,7 @@ Every taggable AWS resource carries exactly this set (R8.7); cost-allocation sub
 ### ArgoCD AppProject (destination allowlist)
 
 ```yaml
-# projects/<name>.yaml — conceptual schema (R14.1, R14.2)
+# projects/<name>.yaml  -  conceptual schema (R14.1, R14.2)
 spec:
   sourceRepos: ["https://github.com/<org>/driftguard-gitops.git"]  # enumerated only
   destinations:
@@ -772,7 +772,7 @@ slo:
 ### ExternalSecret reference (no plaintext)
 
 ```yaml
-# secrets/*.yaml (R23.3) — reference only, never a value
+# secrets/*.yaml (R23.3)  -  reference only, never a value
 spec:
   secretStoreRef: { name: aws-secrets-manager }
   data:
@@ -782,7 +782,7 @@ spec:
 ## Correctness Properties
 
 *A property is a characteristic or behavior that should hold true across all valid executions of a
-system — essentially, a formal statement about what the system should do. Properties serve as the bridge
+system  -  essentially, a formal statement about what the system should do. Properties serve as the bridge
 between human-readable specifications and machine-verifiable correctness guarantees.*
 
 ### Scope of property-based testing in DriftGuard
@@ -796,9 +796,9 @@ PBT is reserved for the bounded subset where **we author the logic and the outpu
 input**:
 
 - Terraform **conformance rules** evaluated over `terraform plan -json` (tags, IAM wildcards, security-group
-  and API exposure) — the rules are code we write, and the input space of resource/statement/rule shapes is
+  and API exposure)  -  the rules are code we write, and the input space of resource/statement/rule shapes is
   large.
-- **OPA/Gatekeeper Rego** admission policies — pure decision functions over arbitrary pod specs.
+- **OPA/Gatekeeper Rego** admission policies  -  pure decision functions over arbitrary pod specs.
 - **ArgoCD manifest invariants** we enforce over the Config_Repo (opt-in prune, Project default-deny).
 - The **no-plaintext-secrets** content scanner.
 - **Node-cap validation** logic.
@@ -847,8 +847,8 @@ with an administrative port (22 or 3389) within its port range.
 ### Property 6: Gatekeeper baseline admission decision
 
 *For any* Kubernetes workload spec, the Policy_Engine SHALL deny admission **if and only if** the spec
-violates at least one baseline rule — a privileged container, use of a host namespace (hostPID, hostIPC, or
-hostNetwork), or a missing required label (`Environment`, `Project`, or `ManagedBy`) — and SHALL admit the
+violates at least one baseline rule  -  a privileged container, use of a host namespace (hostPID, hostIPC, or
+hostNetwork), or a missing required label (`Environment`, `Project`, or `ManagedBy`)  -  and SHALL admit the
 workload when it violates none of them.
 
 **Validates: Requirements 21.2, 21.3, 21.4**
@@ -953,11 +953,11 @@ differing resources (R17.4); `1` → check-failed, never drift-free (R17.7).
 
 ## Testing Strategy
 
-Testing follows a **dual approach** — example/integration tests for concrete behavior and external wiring,
-and property tests for the authored-logic subset — layered into a pyramid that ends in a full end-to-end
+Testing follows a **dual approach**  -  example/integration tests for concrete behavior and external wiring,
+and property tests for the authored-logic subset  -  layered into a pyramid that ends in a full end-to-end
 smoke run.
 
-### Layer 1 — Static and conformance checks (fast, run on every PR)
+### Layer 1  -  Static and conformance checks (fast, run on every PR)
 
 - `terraform fmt -check`, `terraform validate`, `tflint` on every module and `live/<env>` root.
 - `tfsec`/`Checkov` security scan; HIGH/CRITICAL fails the PR and blocks merge (R24.5, R24.6).
@@ -968,9 +968,9 @@ smoke run.
 - `conftest` policy tests over Config_Repo manifests for the ArgoCD invariants (feeds Properties 7 and 8).
 - `Infracost` cost estimate posted to the PR (see Cost Control design; R26.7).
 
-### Layer 2 — Property-based tests (min 100 iterations each)
+### Layer 2  -  Property-based tests (min 100 iterations each)
 
-A property-testing library is used per language — **Hypothesis** (Python) for the conformance-rule and
+A property-testing library is used per language  -  **Hypothesis** (Python) for the conformance-rule and
 scanner logic and the Demo_Service, and **OPA/conftest `test` + Gatekeeper `gator`** for the Rego policies.
 Property-based testing is **not** implemented from scratch. Each test is tagged
 **Feature: gitops-platform, Property {number}: {property_text}** and references its design property.
@@ -988,7 +988,7 @@ Property-based testing is **not** implemented from scratch. Each test is tagged
 | P9 No plaintext secrets | Generate content with/without secret-shaped tokens; assert scanner rejects plaintext, accepts references. |
 | P10 Node-cap validation | Generate (cap, request) pairs incl. boundaries {0,1,1000,1001,neg}; assert cap range + reject-over-cap clamped. |
 
-### Layer 3 — Unit and example tests
+### Layer 3  -  Unit and example tests
 
 - Demo_Service (`pytest`): `/healthz` returns success ≤2s when ready (R25.2); returns a not-ready failure and
   never falsely reports ready when not ready (R25.3, edge case); `/metrics` returns Prometheus exposition
@@ -1001,7 +1001,7 @@ Property-based testing is **not** implemented from scratch. Each test is tagged
 - Argo Rollouts **analysis dry-run** against seeded Prometheus data: clean metrics promote; breaching metrics
   abort and roll back (R18.5, R18.6).
 
-### Layer 4 — Integration tests (ephemeral environment)
+### Layer 4  -  Integration tests (ephemeral environment)
 
 - ArgoCD: Root_Application creates children ≤180s (R9.3); ApplicationSet generates/removes an App on
   target add/remove ≤300s (R10.3, R10.4); sync-wave ordering and halt-on-unhealthy-wave (R12).
@@ -1010,7 +1010,7 @@ Property-based testing is **not** implemented from scratch. Each test is tagged
 - Gatekeeper runtime webhook fail-closed (R21.6); ESO materializes a Secret ≤60s then preserves values when
   the store is broken (R23.2, R23.5); Falco triggers and forwards an alert ≤30s (R22.2, R22.3).
 
-### Layer 5 — End-to-end smoke (the DriftGuard acceptance scenario)
+### Layer 5  -  End-to-end smoke (the DriftGuard acceptance scenario)
 
 A single scripted run, executed against an ephemeral `dev` environment, that exercises the platform's
 defining behaviors end to end (R27.2):
@@ -1019,11 +1019,11 @@ defining behaviors end to end (R27.2):
    dns → ArgoCD) and confirm ArgoCD + add-ons reach Healthy/Ready.
 2. **Deploy the Demo_Service via GitOps** (CI pushes image, bumps the Config_Repo tag, ArgoCD reconciles) and
    confirm a successful HTTPS health check (R27.2).
-3. **Induce drift** — mutate a live resource out-of-band (`kubectl scale`) — and observe ArgoCD mark
+3. **Induce drift**  -  mutate a live resource out-of-band (`kubectl scale`)  -  and observe ArgoCD mark
    `OutOfSync` ≤180s and self-heal ≤120s (R11.2, R11.3). *This is the core DriftGuard proof.*
-4. **Induce a bad canary** — deploy a version that breaches the error-rate/latency thresholds — and observe
+4. **Induce a bad canary**  -  deploy a version that breaches the error-rate/latency thresholds  -  and observe
    Argo Rollouts abort and roll back to the previous stable version (R18.5).
-5. **Teardown** — a single `terraform destroy` on the env leaves zero billable compute, NAT gateways, and
+5. **Teardown**  -  a single `terraform destroy` on the env leaves zero billable compute, NAT gateways, and
    load balancers (R26.1, R26.2).
 
 ### Test data and boundaries
@@ -1051,8 +1051,8 @@ its own IRSA role and a slightly more involved bootstrap.
 
 **Decision:** Use External Secrets Operator (ESO) backed by AWS Secrets Manager.
 **Alternatives:** Bitnami Sealed Secrets (encrypted secrets committed to Git).
-**Rationale:** ESO keeps secret material entirely out of Git — only references live in the Config_Repo
-(R23.3) — and centralizes rotation in Secrets Manager, with graceful handling when the store is unreachable
+**Rationale:** ESO keeps secret material entirely out of Git  -  only references live in the Config_Repo
+(R23.3)  -  and centralizes rotation in Secrets Manager, with graceful handling when the store is unreachable
 (R23.5). Sealed Secrets stores ciphertext in Git, which couples rotation to Git commits and risks a
 compromised sealing key exposing history. Trade-off accepted: ESO adds a dependency on an external store and
 an IRSA role to read it.
@@ -1077,7 +1077,7 @@ Terraform/Helm; deliver all other in-cluster components through ArgoCD from the 
 **Rationale:** This is the single most important boundary in the platform. Components required for the cluster
 to *exist* or for GitOps to *start* cannot bootstrap themselves from inside GitOps, so Terraform owns them
 (R9.1). Once ArgoCD exists, everything else benefits from continuous drift correction and a Git-auditable
-change history (R9.4, R11) — so add-ons, policies, observability, rollouts, and workloads are ArgoCD-managed.
+change history (R9.4, R11)  -  so add-ons, policies, observability, rollouts, and workloads are ArgoCD-managed.
 Managing add-ons in Terraform instead would forfeit drift detection on exactly the components the platform
 exists to govern. Trade-off accepted: a small, clearly documented imperative surface at day 0/1 (the handoff
 point in the "Two Layers, One Timeline" diagram).

@@ -4,10 +4,10 @@ This directory is the authoritative planning package for the DriftGuard GitOps I
 
 ## Specification artifacts
 
-- `requirements.md` — user stories and acceptance criteria, including negative/security constraints.
-- `design.md` — architecture, ownership boundaries, component interfaces, workflows, decisions, and test strategy.
-- `tasks.md` — implementation sequence, property-test obligations, checkpoints, and task status.
-- `.config.kiro` — Kiro specification metadata.
+- `requirements.md`  -  user stories and acceptance criteria, including negative/security constraints.
+- `design.md`  -  architecture, ownership boundaries, component interfaces, workflows, decisions, and test strategy.
+- `tasks.md`  -  implementation sequence, property-test obligations, checkpoints, and task status.
+- `.config.kiro`  -  Kiro specification metadata.
 
 ## Reading order
 

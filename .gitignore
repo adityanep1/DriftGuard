@@ -29,7 +29,7 @@ Thumbs.db
 **/crash.log
 **/crash.*.log
 **/plans/
-# Do NOT ignore .terraform.lock.hcl — provider selections must be reviewed and committed.
+# Do NOT ignore .terraform.lock.hcl - provider selections must be reviewed and committed.
 
 # === Local secrets and environment files ===
 .env
