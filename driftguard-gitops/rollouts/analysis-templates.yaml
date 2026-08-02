@@ -1,0 +1,37 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: demo-service-error-rate
+spec:
+  metrics:
+    - name: error-rate
+      interval: 60s
+      failureLimit: 1
+      consecutiveErrorLimit: 1
+      timeout: 60s
+      successCondition: result[0] < 0.05
+      provider:
+        prometheus:
+          address: http://kube-prometheus-stack-prometheus.monitoring.svc:9090
+          query: |
+            sum(rate(http_requests_total{service="demo-service",status=~"5.."}[5m]))
+            /
+            clamp_min(sum(rate(http_requests_total{service="demo-service"}[5m])), 1)
+---
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: demo-service-p95-latency
+spec:
+  metrics:
+    - name: p95-latency
+      interval: 60s
+      failureLimit: 1
+      consecutiveErrorLimit: 1
+      timeout: 60s
+      successCondition: result[0] < 0.5
+      provider:
+        prometheus:
+          address: http://kube-prometheus-stack-prometheus.monitoring.svc:9090
+          query: |
+            histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{service="demo-service"}[5m])) by (le))
