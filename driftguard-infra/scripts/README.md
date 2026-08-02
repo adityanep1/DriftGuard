@@ -25,15 +25,15 @@ Read the script before execution and confirm the working directory, AWS account,
 
 ## Read-only or offline
 
-- `validate.ps1` / `validate.sh` — formatting, Terraform initialization/validation, Python tests, security scans, conformance, and Kubernetes manifest schema checks. They never apply infrastructure. Kubeconform excludes GitHub workflow/Kustomize input files and uses `-ignore-missing-schemas` for CRDs not present in its bundled Kubernetes schemas; YAML parsing, Conftest, and repository tests still validate those custom resources.
-- `integration-argocd.ps1` — cluster-dependent Root_Application and child-Application health/discovery check.
-- `integration-addons.ps1` — readiness check plus opt-in ESO, Gatekeeper, Falco, and Loki runtime checks.
-- `integration-crossplane.ps1` — opt-in Crossplane provider/claim readiness and deprovision check; it deletes the sample resource and requires `-ConfirmDeprovision`.
+- `validate.ps1` / `validate.sh`: formatting, Terraform initialization/validation, Python tests, security scans, conformance, and Kubernetes manifest schema checks. They never apply infrastructure. Kubeconform excludes GitHub workflow/Kustomize input files and uses `-ignore-missing-schemas` for CRDs not present in its bundled Kubernetes schemas; YAML parsing, Conftest, and repository tests still validate those custom resources.
+- `integration-argocd.ps1`: cluster-dependent Root_Application and child-Application health/discovery check.
+- `integration-addons.ps1`: readiness check plus opt-in ESO, Gatekeeper, Falco, and Loki runtime checks.
+- `integration-crossplane.ps1`: opt-in Crossplane provider/claim readiness and deprovision check; it deletes the sample resource and requires `-ConfirmDeprovision`.
 
 ## Mutating or destructive
 
-- `e2e-smoke.ps1` — provisions or exercises a complete dev flow, injects drift/canary failure, and tears down.
-- `teardown.ps1` / `teardown.sh` — removes ingress/load-balancer dependencies and destroys one environment after explicit confirmation.
+- `e2e-smoke.ps1`: provisions or exercises a complete dev flow, injects drift/canary failure, and tears down.
+- `teardown.ps1` / `teardown.sh`: removes ingress/load-balancer dependencies and destroys one environment after explicit confirmation.
 
 Do not run smoke, integration, apply, or teardown scripts against production or an unknown context. Use a dedicated test account and record tool versions, timestamps, target context, and exit codes.
 

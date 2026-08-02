@@ -4,10 +4,10 @@ This directory contains the Kubernetes desired state for the Demo_Service. The a
 
 ## Layout
 
-- `base/` — Rollout, Services, Ingress, ServiceAccount, labels, probes, and common configuration.
-- `overlays/dev/` — development image/configuration.
-- `overlays/staging/` — pre-production image/configuration.
-- `overlays/prod/` — production image/configuration and stricter availability expectations.
+- `base/`: Rollout, Services, Ingress, ServiceAccount, labels, probes, and common configuration.
+- `overlays/dev/`: development image/configuration.
+- `overlays/staging/`: pre-production image/configuration.
+- `overlays/prod/`: production image/configuration and stricter availability expectations.
 
 ## Delivery contract
 

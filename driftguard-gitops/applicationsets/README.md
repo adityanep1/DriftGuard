@@ -4,9 +4,9 @@ ApplicationSets generate ArgoCD Applications from declarative target sets. They 
 
 ## Current generators
 
-- `platform-addons-appset.yaml` — pinned platform Helm charts.
-- `observability-appset.yaml` — Prometheus/Grafana, Loki, and Tempo charts.
-- `workloads-appset.yaml` — one Demo_Service Application per Environment.
+- `platform-addons-appset.yaml`: pinned platform Helm charts.
+- `observability-appset.yaml`: Prometheus/Grafana, Loki, and Tempo charts.
+- `workloads-appset.yaml`: one Demo_Service Application per Environment.
 
 Falco forwarding and other resources that need custom Helm values may use explicit child Applications instead of forcing values into a generic template.
 

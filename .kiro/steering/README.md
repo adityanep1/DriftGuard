@@ -4,11 +4,11 @@ These files are workspace guidance, not runtime configuration. They shape how Ki
 
 ## Files
 
-- `00-driftguard-engineering.md` — always-included architecture boundary, safety contract, definition of done, and documentation obligations.
-- `10-terraform-aws.md` — Terraform module boundaries, provider/state rules, AWS security invariants, and IaC review.
-- `20-gitops-kubernetes.md` — ArgoCD ownership, Application safety, Kubernetes resource quality, progressive delivery, and observability.
-- `30-security-validation.md` — fail-closed security gates, IAM/IRSA review, secret scanning, CI security, and evidence standards.
-- `40-documentation.md` — README structure, command safety labels, accuracy, maintenance, and writing style.
+- `00-driftguard-engineering.md`: always-included architecture boundary, safety contract, definition of done, and documentation obligations.
+- `10-terraform-aws.md`: Terraform module boundaries, provider/state rules, AWS security invariants, and IaC review.
+- `20-gitops-kubernetes.md`: ArgoCD ownership, Application safety, Kubernetes resource quality, progressive delivery, and observability.
+- `30-security-validation.md`: fail-closed security gates, IAM/IRSA review, secret scanning, CI security, and evidence standards.
+- `40-documentation.md`: README structure, command safety labels, accuracy, maintenance, and writing style.
 
 ## Inclusion
 

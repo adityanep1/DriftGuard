@@ -4,14 +4,14 @@ Bootstrap is the controlled handoff from Terraform to ArgoCD. Terraform installs
 
 ## Files
 
-- `root-app.yaml` — the single seed Application created by Terraform.
-- `children/projects-app.yaml` — AppProjects and declarative ArgoCD configuration.
-- `children/applicationsets-app.yaml` — platform/workload/observability ApplicationSets.
-- `children/security-app.yaml` — Gatekeeper policies and constraints.
-- `children/secrets-app.yaml` — ExternalSecret and SecretStore references.
-- `children/observability-config-app.yaml` — collector, dashboards, and SLO configuration.
-- `children/karpenter-nodepool-app.yaml` — Karpenter capacity resources.
-- explicit add-on child Applications — configured chart sources such as Falco/Falcosidekick.
+- `root-app.yaml`: the single seed Application created by Terraform.
+- `children/projects-app.yaml`: AppProjects and declarative ArgoCD configuration.
+- `children/applicationsets-app.yaml`: platform/workload/observability ApplicationSets.
+- `children/security-app.yaml`: Gatekeeper policies and constraints.
+- `children/secrets-app.yaml`: ExternalSecret and SecretStore references.
+- `children/observability-config-app.yaml`: collector, dashboards, and SLO configuration.
+- `children/karpenter-nodepool-app.yaml`: Karpenter capacity resources.
+- explicit add-on child Applications: configured chart sources such as Falco/Falcosidekick.
 
 ## Safety invariants
 

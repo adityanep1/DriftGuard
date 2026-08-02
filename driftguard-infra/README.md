@@ -8,12 +8,12 @@ Terraform owns networking, EKS, IAM/IRSA, ECR, DNS/ACM, remote state bootstrap, 
 
 ## Directory map
 
-- `bootstrap/` — one-time S3 state bucket and DynamoDB lock table.
-- `modules/` — independently reusable infrastructure modules; see `modules/README.md`.
-- `live/<env>/` — isolated environment roots; see `live/README.md`.
-- `policies/` — Rego plan policies, fixtures, Python conformance helpers, and tests.
-- `scripts/` — validation, integration, smoke, and guarded teardown scripts.
-- `.github/workflows/` — plan, apply, drift, and security automation.
+- `bootstrap/`: one-time S3 state bucket and DynamoDB lock table.
+- `modules/`: independently reusable infrastructure modules; see `modules/README.md`.
+- `live/<env>/`: isolated environment roots; see `live/README.md`.
+- `policies/`: Rego plan policies, fixtures, Python conformance helpers, and tests.
+- `scripts/`: validation, integration, smoke, and guarded teardown scripts.
+- `.github/workflows/`: plan, apply, drift, and security automation.
 
 ## Required toolchain
 

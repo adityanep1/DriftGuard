@@ -4,12 +4,12 @@ The observability tree delivers the metrics, logs, traces, dashboards, and SLO c
 
 ## Components
 
-- `kube-prometheus-stack/` — Prometheus and Grafana chart-owned configuration.
-- `loki/` — log storage/query configuration and retention decisions.
-- `tempo/` — trace storage/query configuration and retention decisions.
-- `otel-collector/` — OpenTelemetry receivers, processors, exporters, and health endpoint.
-- `dashboards/` — dashboards-as-code ConfigMaps.
-- `slo/` — SLI recording rules, error budget calculations, and long/short burn-rate alerts.
+- `kube-prometheus-stack/`: Prometheus and Grafana chart-owned configuration.
+- `loki/`: log storage/query configuration and retention decisions.
+- `tempo/`: trace storage/query configuration and retention decisions.
+- `otel-collector/`: OpenTelemetry receivers, processors, exporters, and health endpoint.
+- `dashboards/`: dashboards-as-code ConfigMaps.
+- `slo/`: SLI recording rules, error budget calculations, and long/short burn-rate alerts.
 
 ## Signal contract
 

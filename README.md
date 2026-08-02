@@ -2,8 +2,8 @@
 
 DriftGuard is a GitOps Infrastructure Automation Platform for AWS EKS. It demonstrates a strict two-layer control model:
 
-- **Layer A — Terraform:** creates isolated AWS infrastructure, IAM/IRSA, ECR, DNS/ACM, remote state, and the initial ArgoCD installation.
-- **Layer B — ArgoCD:** reconciles add-ons, policies, observability, secrets references, workloads, and progressive delivery from the Config_Repo.
+- **Layer A (Terraform):** creates isolated AWS infrastructure, IAM/IRSA, ECR, DNS/ACM, remote state, and the initial ArgoCD installation.
+- **Layer B (ArgoCD):** reconciles add-ons, policies, observability, secrets references, workloads, and progressive delivery from the Config_Repo.
 
 ## Repository map
 
