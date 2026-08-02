@@ -1,42 +1,69 @@
-# DriftGuard infrastructure repository
+# DriftGuard Infrastructure Repository
 
-This repository owns the AWS substrate and the one-time ArgoCD handoff. It must not become a second Kubernetes deployment system: after ArgoCD is seeded, day-2 resources belong in `driftguard-gitops`.
+This repository owns the AWS substrate and the one-time handoff to ArgoCD. Its job is to provision everything Kubernetes needs to run, install ArgoCD, and then get out of the way. After ArgoCD is seeded with the Root Application, all day-2 Kubernetes resources belong in `driftguard-gitops`.
 
-## Ownership
+Think of this as the "foundation layer." It builds the house (networking, cluster, identity, registries, DNS), installs the construction manager (ArgoCD), and then hands over the keys.
 
-Terraform owns networking, EKS, IAM/IRSA, ECR, DNS/ACM, remote state bootstrap, GitHub OIDC roles, and the pinned ArgoCD Helm release. The `live/dev`, `live/staging`, and `live/prod` roots compose those modules with distinct backend keys and environment-specific sizing.
+## What Terraform owns
 
-## Directory map
+Terraform manages networking (VPC, subnets, NAT, routing), EKS (cluster, node groups, OIDC), IAM/IRSA (workload roles with least-privilege policies), ECR (private container registries), DNS/ACM (Route53 zones and TLS certificates), remote state (S3 backend with DynamoDB locking), GitHub OIDC (keyless CI roles), and the pinned ArgoCD Helm release.
 
-- `bootstrap/`: one-time S3 state bucket and DynamoDB lock table.
-- `modules/`: independently reusable infrastructure modules; see `modules/README.md`.
-- `live/<env>/`: isolated environment roots; see `live/README.md`.
-- `policies/`: Rego plan policies, fixtures, Python conformance helpers, and tests.
-- `scripts/`: validation, integration, smoke, and guarded teardown scripts.
-- `.github/workflows/`: plan, apply, drift, and security automation.
+The `live/dev`, `live/staging`, and `live/prod` roots each compose these modules with their own backend keys, CIDR ranges, and environment-specific sizing.
+
+## Directory layout
+
+| Path | Purpose |
+|---|---|
+| `bootstrap/` | One-time S3 state bucket and DynamoDB lock table setup |
+| `modules/` | Independently reusable infrastructure modules (see `modules/README.md`) |
+| `live/<env>/` | Isolated environment roots with their own state and variables (see `live/README.md`) |
+| `policies/` | Rego plan policies, fixtures, Python conformance helpers, and tests (see `policies/python/README.md`) |
+| `scripts/` | Validation, integration, smoke, and guarded teardown scripts (see `scripts/README.md`) |
+| `.github/workflows/` | Plan, apply, drift detection, and security automation |
 
 ## Required toolchain
 
-Terraform `1.15.3` is pinned in the project documentation. AWS provider constraints remain `~> 5.0`; Helm, Kubernetes, and TLS providers are pinned in module/provider files. Commit provider lock files. Validation also uses Python, pytest, tflint, tfsec or Checkov, conftest/OPA, kubeconform, and optionally promtool for GitOps rules.
+The project uses Terraform `1.15.3` with the AWS provider constrained to `~> 5.0`. Helm, Kubernetes, and TLS providers are pinned in module and provider files. Always commit provider lock files after changes.
+
+For full validation, you will also need: Python 3.11+, pytest, tflint, tfsec (or Checkov), conftest/OPA, kubeconform, and optionally promtool for GitOps rule validation.
 
 ## Provisioning order
 
-1. Validate AWS identity, region, OIDC trust, and cost ownership.
-2. Bootstrap the encrypted/versioned state bucket and DynamoDB lock table.
-3. Select one environment and review its backend key, CIDRs, node groups, node cap, and NAT mode.
+If you are setting up a new environment from scratch, follow these steps in order:
+
+1. Validate your AWS identity, region, OIDC trust configuration, and cost-ownership tags.
+2. Bootstrap the encrypted, versioned state bucket and DynamoDB lock table (see `bootstrap/README.md`).
+3. Pick an environment (`dev`, `staging`, or `prod`) and review its backend key, CIDRs, node groups, node cap, and NAT mode.
 4. Apply networking, EKS, IAM, ECR, and optional DNS in dependency order.
-5. Configure Kubernetes/Helm providers from the new EKS outputs.
-6. Install ArgoCD through `modules/addons-bootstrap`; verify readiness before trusting the Root_Application.
-7. Observe ArgoCD reconcile the Config_Repo; do not apply day-2 manifests manually.
+5. Configure the Kubernetes and Helm providers using the EKS outputs from the previous step.
+6. Install ArgoCD through the `modules/addons-bootstrap` module. Wait for readiness before trusting the Root Application.
+7. Observe ArgoCD reconcile the Config Repo. Do not manually apply day-2 manifests.
 
-## Validation
+## Running validation locally
 
-Run `./scripts/validate.ps1` from this directory on Windows or `./scripts/validate.sh` on POSIX. The validators are fail-closed: unavailable required tools block the run. Always run focused Python tests and `terraform fmt -check -recursive` before the full suite.
+On POSIX systems:
+
+```bash
+bash scripts/bash/validate.sh
+```
+
+On Windows:
+
+```powershell
+./scripts/powershell/validate.ps1
+```
+
+The validators are fail-closed: if a required tool is unavailable, the run stops rather than reporting a false pass. You can always run the focused Python tests independently:
+
+```bash
+python -m pytest policies/python/ -q
+terraform fmt -check -recursive
+```
 
 ## Mutation and teardown warnings
 
-`terraform apply`, `terraform destroy`, `e2e-smoke.ps1`, and integration scripts are mutating or destructive. Use a dedicated account/context, review the plan, and pass explicit confirmation flags. Teardown removes ALB-backed ingress dependencies first and stops on failure so a partial result can be investigated and rerun safely.
+Commands like `terraform apply`, `terraform destroy`, and the integration/smoke scripts are mutating or destructive. Always use a dedicated account or context, review the plan output carefully, and pass explicit confirmation flags. The teardown scripts remove ALB-backed ingress dependencies first and stop on failure so you can investigate before retrying.
 
-## Deployment blockers
+## Before your first real deployment
 
-Replace `your-org`, example account IDs, example domains, placeholder ARNs, and test-only values before any real deployment. Do not solve a missing secret by placing it in Terraform variables, GitHub workflow source, state fixtures, or GitOps YAML.
+Replace all `your-org` references, example account IDs, example domains, placeholder ARNs, and test-only values with your actual configuration. Never solve a missing secret by placing it directly in Terraform variables, GitHub workflow files, state fixtures, or GitOps YAML.

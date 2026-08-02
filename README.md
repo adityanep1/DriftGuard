@@ -1,63 +1,83 @@
 # DriftGuard
 
-DriftGuard is a GitOps Infrastructure Automation Platform for AWS EKS. It demonstrates a strict two-layer control model:
+Welcome to DriftGuard, a GitOps Infrastructure Automation Platform built for AWS EKS. This project demonstrates how to run a production-grade Kubernetes platform using a strict two-layer control model where every change flows through Git and every deployment is automated, auditable, and recoverable.
 
-- **Layer A (Terraform):** creates isolated AWS infrastructure, IAM/IRSA, ECR, DNS/ACM, remote state, and the initial ArgoCD installation.
-- **Layer B (ArgoCD):** reconciles add-ons, policies, observability, secrets references, workloads, and progressive delivery from the Config_Repo.
+## The two-layer model
+
+DriftGuard separates infrastructure provisioning from application delivery into two distinct control planes:
+
+**Layer A (Terraform)** handles everything below the Kubernetes API: isolated AWS networking, EKS clusters, IAM and IRSA roles, ECR container registries, DNS and TLS certificates, remote state management, GitHub OIDC for keyless CI, and the initial ArgoCD installation that bridges the two layers.
+
+**Layer B (ArgoCD)** handles everything above the Kubernetes API: platform add-ons, admission policies, observability (metrics, logs, traces), secret references, workload deployments, and progressive delivery. ArgoCD continuously reconciles the cluster state against this Git repository, so the cluster always matches what is declared in code.
+
+Once Terraform installs ArgoCD and seeds the Root Application, Layer A steps back. Day-2 Kubernetes resources belong exclusively to Layer B.
 
 ## Repository map
 
-| Path | Responsibility | Primary control plane |
+| Path | What it does | Controlled by |
 |---|---|---|
-| `driftguard-infra/` | Terraform modules, live environments, policies, CI, teardown | Terraform/AWS |
-| `driftguard-gitops/` | ArgoCD Applications, Helm sources, policies, observability, workloads | ArgoCD/Kubernetes |
-| `demo-service/` | FastAPI workload source, tests, image build, CI | GitHub Actions/ECR |
-| `.kiro/specs/gitops-platform/` | Requirements, design, implementation tasks | Specification |
-| `.kiro/steering/` | Persistent engineering and documentation rules | Kiro |
+| `driftguard-infra/` | Terraform modules, live environment roots, conformance policies, CI workflows, and infrastructure scripts | Terraform and AWS |
+| `driftguard-gitops/` | ArgoCD Applications, Helm chart sources, Gatekeeper policies, observability config, workload manifests, and progressive delivery | ArgoCD and Kubernetes |
+| `demo-service/` | A FastAPI application that exercises the full delivery path: tests, container build, ECR publish, GitOps tag update, canary rollout | GitHub Actions and ECR |
 
-## Start here
+## Getting started
 
-1. Read `.kiro/specs/gitops-platform/requirements.md`, `design.md`, and `tasks.md`.
-2. Read the applicable steering file before editing Terraform, Kubernetes YAML, policy code, or documentation.
-3. Read `driftguard-infra/README.md` for provisioning order and safety gates.
-4. Read `driftguard-gitops/README.md` for the ArgoCD ownership boundary.
-5. Read `demo-service/README.md` for local application development.
+If you are new to this codebase, here is a good reading order:
+
+1. Start with `driftguard-infra/README.md` to understand how the AWS foundation is provisioned and what safety gates are in place.
+2. Read `driftguard-gitops/README.md` to understand the ArgoCD ownership boundary and how Kubernetes state is managed through Git.
+3. Check out `demo-service/README.md` to see how application code flows from source to production through the delivery pipeline.
+4. Browse `driftguard-infra/modules/README.md` for the Terraform module catalog and their contracts.
+5. Look at `driftguard-gitops/bootstrap/README.md` to understand how Terraform hands off control to ArgoCD.
 
 ## Safe local checks
 
+These commands run entirely offline. They do not provision AWS resources or mutate any cluster.
+
 From `driftguard-infra/`:
 
-```powershell
+```bash
 terraform fmt -check -recursive
 python -m pytest policies/python -q
 ```
 
 From `driftguard-gitops/`:
 
-```powershell
+```bash
 python scripts/scan_no_plaintext_secrets.py .
 python -m pytest tests -q
 ```
 
 From `demo-service/`:
 
-```powershell
+```bash
 python -m pytest tests -q
 ```
 
-These checks do not provision AWS or mutate a cluster. Full validation additionally requires pinned external tools and cached Terraform providers; runtime claims require a dedicated test cluster.
+Full validation additionally requires pinned external tools (tflint, tfsec, conftest, kubeconform, promtool) and cached Terraform providers. Runtime claims require a dedicated test cluster.
 
 ## Safety rules
 
-Never commit credentials, plaintext secret values, provider lock-file changes without review, or deployment placeholders. CI changes Git and publishes artifacts; it does not run `kubectl apply`. Do not run Terraform apply/destroy or cluster integration scripts without an explicitly identified safe target.
+A few non-negotiable rules that apply everywhere in this repository:
+
+- Never commit credentials, plaintext secret values, or provider lock-file changes without review.
+- CI changes Git and publishes artifacts; it never runs `kubectl apply` directly.
+- Do not run `terraform apply`, `terraform destroy`, or integration scripts without an explicitly identified safe target and account.
+- Replace all `your-org` placeholders, example account IDs, and example domains before any real deployment.
 
 ## Documentation map
 
-- Infrastructure operations: `driftguard-infra/README.md`
+Every major directory has its own README with detailed guidance:
+
+- Infrastructure operations and provisioning: `driftguard-infra/README.md`
 - Terraform module contracts: `driftguard-infra/modules/README.md`
 - Environment isolation: `driftguard-infra/live/README.md`
 - Validation and teardown scripts: `driftguard-infra/scripts/README.md`
-- GitOps bootstrap: `driftguard-gitops/bootstrap/README.md`
-- Policies and conformance: `driftguard-gitops/policies/README.md` and `conformance/README.md`
-- Observability: `driftguard-gitops/observability/README.md`
+- Policy conformance tests: `driftguard-infra/policies/python/README.md`
+- GitOps bootstrap and handoff: `driftguard-gitops/bootstrap/README.md`
+- AppProject security model: `driftguard-gitops/projects/README.md`
+- Admission policies: `driftguard-gitops/policies/README.md`
+- Conformance rules: `driftguard-gitops/conformance/README.md`
+- Observability stack: `driftguard-gitops/observability/README.md`
 - Demo workload delivery: `driftguard-gitops/workloads/demo-service/README.md`
+- GitOps test suite: `driftguard-gitops/tests/README.md`

@@ -1,19 +1,35 @@
 # ApplicationSets
 
-ApplicationSets generate ArgoCD Applications from declarative target sets. They remove repetitive Application definitions while preserving explicit project, source, destination, version, sync policy, and retry behavior.
+ApplicationSets are ArgoCD's way of generating multiple Applications from a single template. Instead of writing the same Application manifest over and over with slight variations, you declare the template once and provide a list of targets. ArgoCD generates the correct Application for each target automatically.
+
+This saves a lot of repetition while preserving explicit control over project bindings, source pins, destinations, sync policies, and retry behavior.
 
 ## Current generators
 
-- `platform-addons-appset.yaml`: pinned platform Helm charts.
-- `observability-appset.yaml`: Prometheus/Grafana, Loki, and Tempo charts.
-- `workloads-appset.yaml`: one Demo_Service Application per Environment.
+| File | What it generates |
+|---|---|
+| `platform-addons-appset.yaml` | One Application per pinned platform Helm chart (Argo Rollouts, AWS LB Controller, ESO, etc.) |
+| `observability-appset.yaml` | Applications for Prometheus/Grafana, Loki, and Tempo charts |
+| `workloads-appset.yaml` | One Demo Service Application per environment (dev, staging, prod) |
 
-Falco forwarding and other resources that need custom Helm values may use explicit child Applications instead of forcing values into a generic template.
+Some resources that need custom Helm values (like Falco forwarding configuration) use explicit child Applications instead of forcing complex values into a generic template. That is fine; not everything needs to be an ApplicationSet.
 
 ## Generator rules
 
-Use `missingkey=error` for Go templates. Every target must provide all fields consumed by the template. A malformed or incomplete target must fail clearly and must not silently generate an unsafe Application. Removing a target must remove only its generated Application according to the selected pruning policy.
+A few rules that keep ApplicationSets safe:
+
+- Always use `missingkey=error` in Go templates. If a target does not provide a required field, the generation should fail loudly rather than producing a broken Application.
+- Removing a target from the list must remove only its generated Application, following the configured pruning policy.
+- Every generated Application must land in an approved AppProject with the correct source pin and destination namespace.
 
 ## Review checklist
 
-Confirm target count, unique names, chart/source pins, approved AppProject, destination namespace, sync wave, `selfHeal`, retry limit 5, `CreateNamespace=true`, and `prune: false`. Test additions, removals, malformed input, and generated Application/project binding before merging.
+Before merging changes to an ApplicationSet, verify:
+
+- Target count matches expectations
+- Each generated Application has a unique name
+- Chart and source versions are pinned (no floating tags)
+- The AppProject is one of the approved defaults
+- Destination namespaces are correct
+- Sync waves, `selfHeal`, retry limit 5, `CreateNamespace=true`, and `prune: false` are all set appropriately
+- Test additions, removals, and malformed targets to confirm the template handles them correctly

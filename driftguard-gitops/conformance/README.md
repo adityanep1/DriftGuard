@@ -1,27 +1,45 @@
-# GitOps conformance
+# GitOps Conformance
 
-Conformance protects the ArgoCD safety boundary before a manifest reaches a cluster. The rules cover opt-in pruning and Application-to-AppProject binding; Gatekeeper Rego tests cover baseline admission decisions.
+Conformance testing protects the ArgoCD safety boundary before a manifest ever reaches a cluster. Think of it as a pre-flight check: if something violates the platform's rules, it gets caught here in CI, not after it has been deployed.
 
-## Invariants
+The conformance rules cover opt-in pruning and Application-to-AppProject binding. Gatekeeper Rego tests cover the baseline admission decisions (privileged containers, host namespaces, required labels).
+
+## The invariants we enforce
 
 - Every non-bootstrap Application belongs to an approved default-deny AppProject.
-- Source repositories, destination namespaces, and cluster resources are explicitly enumerated.
-- Automated pruning is false unless the individual Application carries `driftguard.io/prune-approved: "true"`.
-- No global/default pruning switch may silently enable deletion.
-- Gatekeeper rejects privileged containers, host namespaces, and missing required labels; it fails closed when admission evaluation cannot complete.
+- Source repositories, destination namespaces, and cluster resources are explicitly enumerated in each project.
+- Automated pruning is false by default. An Application can only enable pruning if it carries the annotation `driftguard.io/prune-approved: "true"`.
+- No global or default pruning switch may silently enable deletion across Applications.
+- Gatekeeper rejects privileged containers, host namespace access, and missing required labels. It fails closed when admission evaluation cannot complete.
 
-## Local checks
+## Running local checks
 
 From `driftguard-gitops/`:
 
-```powershell
+```bash
+# Run the test suite (verifies all invariants against the actual YAML in this repo)
 python -m pytest tests -q
+
+# Run the secret scanner
 python scripts/scan_no_plaintext_secrets.py .
+
+# When conftest is installed
 conftest test --policy conformance .
+
+# When kubeconform is installed
+kubeconform -strict -summary <yaml-files>
 ```
 
-Use `kubeconform -strict -summary` over all YAML files when installed. Conftest and kubeconform are required gates in CI; an unavailable binary is a blocked validation, not a pass.
+Conftest and kubeconform are required gates in CI. An unavailable binary is a blocked validation, not a pass.
 
-## Review evidence
+## Evidence for policy changes
 
-For a policy change, include the affected manifest scope, an allowed fixture, a rejected fixture, the expected denial message, and the command/tool version used. Runtime admission behavior still requires a real Gatekeeper webhook test.
+When proposing a change to a conformance rule, include:
+
+- The affected manifest scope (which Applications or resources change)
+- An allowed fixture (a manifest that should pass)
+- A rejected fixture (a manifest that should fail)
+- The expected denial message
+- The command and tool version used for testing
+
+Runtime admission behavior still requires testing against a real Gatekeeper webhook in a cluster.

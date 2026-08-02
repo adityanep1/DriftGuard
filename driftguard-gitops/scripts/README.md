@@ -1,21 +1,43 @@
-# Config_Repo validation scripts
+# Config Repo Validation Scripts
 
-These scripts protect the pull-based GitOps boundary and the no-plaintext-secret rule.
+These scripts protect the pull-based GitOps boundary and enforce the no-plaintext-secret rule. They are your first line of defense against accidentally committing sensitive material to the repository.
 
 ## Secret scanner
 
-Run from `driftguard-gitops/`:
+The main tool here is the plaintext secret scanner. Run it from `driftguard-gitops/`:
 
-```powershell
+```bash
 python scripts/scan_no_plaintext_secrets.py .
 ```
 
-The scanner rejects AWS access keys, private-key PEM blocks, plaintext credential assignments, and high-entropy token-like values. It accepts ExternalSecret remote references, environment references, documented replacement markers, and ciphertext markers. A false positive must be resolved by using a reference/ciphertext design or a narrowly reviewed scanner exception; never paste a real secret into the repository.
+The scanner detects:
+- AWS access keys (the `AKIA...` pattern)
+- PEM private key blocks
+- Plaintext credential assignments (like `password: actual-value`)
+- High-entropy token-like values that look like real secrets
+
+It intentionally accepts:
+- ExternalSecret remote references
+- Environment variable references (like `${SECRET_REF}`)
+- Documented replacement markers (like `REPLACE_WITH_COMMIT_SHA`)
+- Ciphertext markers (like `ENC[AES256,...]`)
+
+If you get a false positive, the correct fix is to use a reference/ciphertext design or add a narrowly reviewed scanner exception. Never paste a real secret into the repository to work around a detection issue.
 
 ## CI and hook usage
 
-The Config_Repo workflow runs the scanner and tests. The `guard-secrets` Kiro hook should run it on file creation/edit events, especially under `secrets/`. Run the scanner before creating a commit and after changing `.yaml`, Helm values, examples, or documentation containing configuration snippets.
+The Config Repo CI workflow runs the scanner and tests automatically on every pull request. The `guard-secrets` Kiro hook should also run the scanner on file creation and edit events, especially for files under `secrets/`.
 
-## Failure response
+As a good habit, run the scanner before creating a commit and after changing `.yaml` files, Helm values, examples, or documentation that contains configuration snippets.
 
-Stop the change, remove the value from the working tree and history if necessary, rotate any exposed credential, inspect CI logs, and replace the value with an ExternalSecret reference. `.gitignore` is only an accident-reduction measure and cannot undo a value already committed or uploaded.
+## What to do when a secret is detected
+
+If the scanner catches something real:
+
+1. Stop the change immediately.
+2. Remove the value from the working tree and Git history if it was already committed.
+3. Rotate any exposed credential (assume it is compromised the moment it hits Git).
+4. Inspect CI logs to confirm the detection.
+5. Replace the value with an ExternalSecret reference.
+
+Remember that `.gitignore` only reduces the chance of accidental inclusion. It cannot undo a value that has already been committed or pushed.

@@ -1,26 +1,49 @@
-# Demo_Service GitOps delivery
+# Demo Service GitOps Delivery
 
-This directory contains the Kubernetes desired state for the Demo_Service. The application repository builds and publishes the image; this Config_Repo controls the image tag, deployment strategy, ingress, identity, probes, and environment overlays.
+This directory contains the Kubernetes desired state for the Demo Service. The application repository (in `demo-service/`) builds and publishes the container image; this Config Repo controls the image tag, deployment strategy, ingress rules, identity, probes, and environment-specific configuration.
 
-## Layout
+In other words: the app repo decides what the container looks like, and this directory decides how and where it runs.
 
-- `base/`: Rollout, Services, Ingress, ServiceAccount, labels, probes, and common configuration.
-- `overlays/dev/`: development image/configuration.
-- `overlays/staging/`: pre-production image/configuration.
-- `overlays/prod/`: production image/configuration and stricter availability expectations.
+## Directory layout
 
-## Delivery contract
+| Path | What it contains |
+|---|---|
+| `base/` | Rollout, Services, Ingress, ServiceAccount, labels, probes, and shared configuration |
+| `overlays/dev/` | Development image tag and dev-specific settings |
+| `overlays/staging/` | Pre-production image tag and staging configuration |
+| `overlays/prod/` | Production image tag, stricter availability expectations |
 
-CI commits the full image commit identifier into the selected overlay only after tests, image scanning, ECR publication, and push retries succeed. ArgoCD then reconciles the overlay. Do not edit the live Rollout or use `kubectl apply` as the normal deployment mechanism.
+## How deployment works
+
+CI commits the full image commit SHA into the selected overlay only after tests, image scanning, ECR publication, and push retries all succeed. Once that commit lands in this repo, ArgoCD reconciles the overlay and Argo Rollouts manages the progressive delivery.
+
+The normal deployment mechanism is always: change Git, let ArgoCD and Rollouts handle it. Do not edit the live Rollout or use `kubectl apply` for routine deployments.
 
 ## Progressive delivery
 
-The Rollout supports canary and blue-green patterns. AnalysisTemplates query Prometheus for error rate and latency. A breach, unavailable metric, or slow analysis must abort the rollout and restore the previous stable version. Each canary step and pause duration is part of the release contract.
+The Rollout uses a canary strategy. Traffic is shifted gradually (20%, 40%, 60%, 80%, 100%) with analysis checks at each step. The AnalysisTemplates query Prometheus for error rate and p95 latency. If a metric breaches its threshold, is unavailable, or the analysis is too slow, the rollout aborts and the previous stable version is restored automatically.
 
-## Security and operations
+Each canary step weight and pause duration is part of the release contract. Do not change them without understanding the impact on detection time and blast radius.
 
-Keep the ServiceAccount IRSA annotation scoped to the intended workload role. Preserve the required `Environment`, `Project`, and `ManagedBy` labels, non-root security settings, resource requests/limits, readiness/liveness probes, and the HTTP-to-HTTPS ingress behavior. Environment overlays add the concrete environment label; the shared base must remain environment-neutral. Secrets must be ExternalSecret references, never values.
+## Security and operational requirements
+
+A few things to keep in mind:
+
+- The ServiceAccount IRSA annotation must be scoped to the intended workload role only.
+- Preserve the required labels: `Environment`, `Project`, and `ManagedBy`.
+- Maintain non-root security settings, resource requests/limits, and readiness/liveness probes.
+- Keep the HTTP-to-HTTPS ingress redirect behavior.
+- Environment overlays add the concrete environment label; the shared base must remain environment-neutral.
+- Secrets are always ExternalSecret references, never actual values.
 
 ## Validation
 
-Run Kustomize rendering/schema checks when available, repository invariant tests, secret scanning, and rollout analysis tests. Runtime validation requires Argo Rollouts, Prometheus, the ingress controller, and a reachable test endpoint.
+```bash
+# Run invariant tests and rollout manifest checks
+python -m pytest tests -q
+
+# Run the secret scanner
+python scripts/scan_no_plaintext_secrets.py .
+```
+
+When available, also run Kustomize rendering and schema checks. Full runtime validation requires Argo Rollouts, Prometheus, the ingress controller, and a reachable test endpoint.
