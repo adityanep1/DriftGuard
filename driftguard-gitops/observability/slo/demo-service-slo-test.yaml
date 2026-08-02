@@ -1,0 +1,31 @@
+rule_files:
+  - demo-service-slo-rules.yaml
+
+tests:
+  - interval: 1m
+    input_series:
+      - series: 'http_requests_total{service="demo-service",status="200"}'
+        values: '100+100x10'
+      - series: 'http_requests_total{service="demo-service",status="500"}'
+        values: '0+5x10'
+    promql_expr_test:
+      - expr: demo_service:request_success_ratio:rate5m
+        eval_time: 10m
+        exp_samples:
+          - labels: '{__name__="demo_service:request_success_ratio:rate5m"}'
+            value: 0.9523809523809523
+
+  - interval: 1m
+    input_series:
+      - series: 'http_requests_total{service="demo-service",status="200"}'
+        values: '100+100x10'
+      - series: 'http_requests_total{service="demo-service",status="500"}'
+        values: '0+100x10'
+    alert_rule_test:
+      - eval_time: 10m
+        alertname: DemoServiceSLOBurnRateLongWindow
+        exp_alerts:
+          - exp_labels:
+              severity: critical
+            exp_annotations:
+              summary: Demo service is burning its 28-day error budget rapidly

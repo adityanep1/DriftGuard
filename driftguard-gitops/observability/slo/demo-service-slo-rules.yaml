@@ -1,0 +1,27 @@
+groups:
+  - name: demo-service.slo
+    interval: 30s
+    rules:
+      - record: demo_service:request_success_ratio:rate5m
+        expr: |
+          1 - (
+            sum(rate(http_requests_total{service="demo-service",status=~"5.."}[5m]))
+            /
+            clamp_min(sum(rate(http_requests_total{service="demo-service"}[5m])), 1)
+          )
+      - record: demo_service:error_budget_remaining:ratio
+        expr: 1 - (1 - demo_service:request_success_ratio:rate5m) / (1 - 0.995)
+      - alert: DemoServiceSLOBurnRateLongWindow
+        expr: (1 - demo_service:request_success_ratio:rate5m) / (1 - 0.995) > 14.4
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: Demo service is burning its 28-day error budget rapidly
+      - alert: DemoServiceSLOBurnRateShortWindow
+        expr: (1 - demo_service:request_success_ratio:rate5m) / (1 - 0.995) > 6
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: Demo service short-window burn rate is elevated
