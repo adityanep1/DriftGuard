@@ -1,0 +1,40 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: workloads
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "-10"
+spec:
+  description: Demo and application workloads.
+  sourceRepos:
+    - https://github.com/your-org/driftguard-gitops.git
+  destinations:
+    - server: https://kubernetes.default.svc
+      namespace: demo-dev
+    - server: https://kubernetes.default.svc
+      namespace: demo-staging
+    - server: https://kubernetes.default.svc
+      namespace: demo-prod
+  clusterResourceWhitelist:
+    - group: ""
+      kind: Namespace
+  namespaceResourceWhitelist:
+    - group: ""
+      kind: ConfigMap
+    - group: ""
+      kind: Service
+    - group: ""
+      kind: ServiceAccount
+    - group: ""
+      kind: Secret
+    - group: apps
+      kind: Deployment
+    - group: argoproj.io
+      kind: Rollout
+    - group: networking.k8s.io
+      kind: Ingress
+    - group: external-secrets.io
+      kind: ExternalSecret
+    - group: external-secrets.io
+      kind: SecretStore
