@@ -1,0 +1,27 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: crossplane-resources
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "20"
+    driftguard.io/feature-flag: crossplane
+spec:
+  project: platform-addons
+  source:
+    repoURL: https://github.com/your-org/driftguard-gitops.git
+    targetRevision: main
+    path: optional/crossplane/resources
+    directory:
+      recurse: true
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: crossplane-system
+  syncPolicy:
+    automated:
+      selfHeal: true
+      prune: false
+    syncOptions:
+      - CreateNamespace=true
+    retry:
+      limit: 5

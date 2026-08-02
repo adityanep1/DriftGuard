@@ -1,0 +1,15 @@
+apiVersion: storage.driftguard.io/v1alpha1
+kind: Bucket
+metadata:
+  name: driftguard-sample-bucket
+  namespace: crossplane-system
+  labels:
+    app.kubernetes.io/name: driftguard-sample-bucket
+    app.kubernetes.io/part-of: driftguard
+    Environment: platform
+    Project: DriftGuard
+    ManagedBy: ArgoCD
+spec:
+  compositionRef:
+    name: xbuckets.storage.driftguard.io
+  region: us-east-1

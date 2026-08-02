@@ -1,0 +1,61 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: CompositeResourceDefinition
+metadata:
+  name: xbuckets.storage.driftguard.io
+  labels:
+    app.kubernetes.io/name: crossplane-bucket-definition
+    app.kubernetes.io/part-of: driftguard
+spec:
+  group: storage.driftguard.io
+  names:
+    kind: XBucket
+    plural: xbuckets
+  claimNames:
+    kind: Bucket
+    plural: buckets
+  versions:
+    - name: v1alpha1
+      served: true
+      referenceable: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              properties:
+                region:
+                  type: string
+              required:
+                - region
+---
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: xbuckets.storage.driftguard.io
+  labels:
+    app.kubernetes.io/name: crossplane-bucket-composition
+    app.kubernetes.io/part-of: driftguard
+spec:
+  compositeTypeRef:
+    apiVersion: storage.driftguard.io/v1alpha1
+    kind: XBucket
+  resources:
+    - name: bucket
+      base:
+        apiVersion: s3.aws.upbound.io/v1beta1
+        kind: Bucket
+        metadata:
+          labels:
+            app.kubernetes.io/name: composed-driftguard-bucket
+            app.kubernetes.io/part-of: driftguard
+        spec:
+          deletionPolicy: Delete
+          forProvider:
+            region: us-east-1
+          providerConfigRef:
+            name: default
+      patches:
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.region
+          toFieldPath: spec.forProvider.region
