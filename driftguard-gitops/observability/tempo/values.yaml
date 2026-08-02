@@ -1,0 +1,16 @@
+# Tempo Helm values
+# Chart: tempo (https://grafana.github.io/helm-charts)
+# Distributed tracing backend for the LGTM stack.
+
+tempo:
+  retention: 72h  # 3 days
+  storage:
+    trace:
+      backend: local
+      local:
+        path: /var/tempo/traces
+
+server:
+  httpListenPort: 3200
+
+# Tempo receives traces from the OpenTelemetry Collector via OTLP gRPC.

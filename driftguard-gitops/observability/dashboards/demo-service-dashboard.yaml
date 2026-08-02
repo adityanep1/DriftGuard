@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: demo-service-dashboard
+  namespace: monitoring
+  labels:
+    grafana_dashboard: "1"
+    app.kubernetes.io/name: demo-service-dashboard
+    app.kubernetes.io/part-of: driftguard
+data:
+  demo-service.json: |
+    {
+      "title": "DriftGuard Demo Service",
+      "schemaVersion": 39,
+      "time": {"from": "now-6h", "to": "now"},
+      "panels": [
+        {"type": "timeseries", "title": "Success ratio", "targets": [{"expr": "demo_service:request_success_ratio:rate5m"}]},
+        {"type": "timeseries", "title": "Error budget remaining", "targets": [{"expr": "demo_service:error_budget_remaining:ratio"}]}
+      ]
+    }

@@ -1,0 +1,22 @@
+# Kube-Prometheus-Stack Helm values
+# Chart: kube-prometheus-stack (https://prometheus-community.github.io/helm-charts)
+# Delivers Prometheus, Alertmanager, and Grafana.
+
+prometheus:
+  prometheusSpec:
+    retention: 15d
+    serviceMonitorSelectorNilUsesHelmValues: false
+    podMonitorSelectorNilUsesHelmValues: false
+    ruleSelectorNilUsesHelmValues: false
+
+alertmanager:
+  enabled: true
+
+grafana:
+  enabled: true
+  sidecar:
+    dashboards:
+      enabled: true
+      searchNamespace: ALL
+  persistence:
+    enabled: false

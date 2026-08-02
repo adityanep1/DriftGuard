@@ -1,0 +1,18 @@
+# Loki Helm values
+# Chart: loki (https://grafana.github.io/helm-charts)
+# Log aggregation backend for the LGTM stack.
+
+loki:
+  auth_enabled: false
+  limits_config:
+    retention_period: 168h  # 7 days
+  storage:
+    type: filesystem
+  commonConfig:
+    replication_factor: 1
+
+gateway:
+  enabled: true
+
+singleBinary:
+  replicas: 1
