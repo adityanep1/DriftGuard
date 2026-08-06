@@ -41,3 +41,11 @@ If the scanner catches something real:
 5. Replace the value with an ExternalSecret reference.
 
 Remember that `.gitignore` only reduces the chance of accidental inclusion. It cannot undo a value that has already been committed or pushed.
+
+## Related documentation
+
+- [Config Repo README (parent)](../README.md)
+- [Platform requirements](../../.kiro/specs/gitops-platform/requirements.md)
+- [Security and validation steering](../../.kiro/steering/30-security-validation.md)
+- [Secrets directory](../secrets/README.md)
+- [Test suite](../tests/README.md)

@@ -23,3 +23,9 @@ The module accepts only the inputs it consumes. The VPC identity is represented 
 ## Validation
 
 Run Terraform formatting, initialization with `-backend=false`, `terraform validate`, and the security/conformance tools. The Python test suite (`test_security_modules.py`) verifies that the module source declares the expected shape: pinned version, private subnet placement, secrets encryption, restricted API access, and OIDC provider creation.
+
+## Related documentation
+
+- [Module catalog](../README.md)
+- [Python conformance tests](../../policies/python/README.md)
+- [Live environment roots](../../live/README.md)

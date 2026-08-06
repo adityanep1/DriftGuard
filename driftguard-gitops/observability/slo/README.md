@@ -38,3 +38,12 @@ SLO rules do not exist in isolation. If you change a metric name, label, window,
 - The test fixture (`demo-service-slo-test.yaml`)
 
 Document the alert routing configuration and validate with both clean (happy path) and breaching (failure path) test series.
+
+## Related documentation
+
+- [Observability (parent)](../README.md)
+- [Config Repo README](../../README.md)
+- [Platform requirements](../../../.kiro/specs/gitops-platform/requirements.md)
+- [GitOps and Kubernetes steering](../../../.kiro/steering/20-gitops-kubernetes.md)
+- [Rollouts analysis templates](../../rollouts/README.md)
+- [Demo Service workload](../../workloads/demo-service/README.md)

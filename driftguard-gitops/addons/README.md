@@ -34,3 +34,11 @@ If a controller fails, it must block dependent sync waves or produce an explicit
 ## Validation
 
 For offline checks, run YAML parsing, kubeconform schema validation, and conformance policies. When Helm is available, render charts and inspect the output. For runtime validation, use the integration scripts and record chart versions, cluster context, timestamps, and observed health conditions.
+
+## Related documentation
+
+- [Config Repo README (parent)](../README.md)
+- [Platform requirements](../../.kiro/specs/gitops-platform/requirements.md)
+- [GitOps and Kubernetes steering](../../.kiro/steering/20-gitops-kubernetes.md)
+- [ApplicationSets](../applicationsets/README.md)
+- [AppProject security](../projects/README.md)

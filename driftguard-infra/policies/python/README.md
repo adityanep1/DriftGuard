@@ -70,3 +70,12 @@ All tests should pass in a few seconds. No AWS credentials, Terraform providers,
 ## The Hypothesis approach
 
 When hypothesis is available, property tests generate randomized inputs and verify the safety invariants hold for every combination. This catches edge cases that hand-written test cases might miss. When hypothesis is not installed (for example, on a minimal CI runner), the tests fall back to deterministic iteration over carefully chosen representative inputs. Both approaches cover the same logical properties; hypothesis just explores the space more thoroughly.
+
+## Related documentation
+
+- [Rego policies (parent)](../README.md)
+- [Infrastructure README](../../README.md)
+- [Module catalog](../../modules/README.md)
+- [Live environment roots](../../live/README.md)
+- [Platform requirements](../../../.kiro/specs/gitops-platform/requirements.md)
+- [Security and validation steering](../../../.kiro/steering/30-security-validation.md)

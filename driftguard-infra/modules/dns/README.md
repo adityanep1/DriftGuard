@@ -22,3 +22,9 @@ Zone ID, certificate ARN, and DNS validation records.
 ## Validation
 
 Run the platform composition tests (`test_platform_composition.py`) to verify the module declares the expected structure: Route53 zone, ACM certificate, validation timeout, and optional ALB records. Also run Terraform formatting and validation checks.
+
+## Related documentation
+
+- [Module catalog](../README.md)
+- [Python conformance tests](../../policies/python/README.md)
+- [Live environment roots](../../live/README.md)

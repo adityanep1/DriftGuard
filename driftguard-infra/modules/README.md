@@ -6,13 +6,13 @@ Each module in this directory is independently reusable and receives provider co
 
 | Module | What it owns | Key inputs | Key outputs |
 |---|---|---|---|
-| `networking` | VPC, public/private subnets, IGW, NAT, routes | environment, project, CIDRs, AZs, `nat_per_az` | VPC ID, public/private subnet IDs, NAT IDs |
-| `eks` | EKS cluster, managed node groups, OIDC, secrets encryption | Kubernetes version, private subnet IDs, API CIDRs, node groups, node cap | Cluster name/endpoint/CA, OIDC ARN/issuer |
-| `iam` | Workload IRSA roles and scoped policies | OIDC provider, issuer, namespace/SA bindings, actions/resources | Role ARNs/names and bindings |
-| `ecr` | Private container repositories and lifecycle policies | service set, encryption type/KMS ARN, retention days | Repository names, URLs, ARNs |
-| `dns` | Route53 zone, ACM certificate, DNS validation, optional ALB aliases | zone, hostnames, optional ALB name/zone ID | Zone ID, certificate ARN, validation records |
-| `addons-bootstrap` | Pinned ArgoCD Helm release and Root Application | chart version, Config Repo URL/revision, timeout | ArgoCD release/root metadata |
-| `github-oidc` | GitHub Actions OIDC provider and CI roles | repository, branch, environment | Provider and role ARNs |
+| [`networking`](networking/README.md) | VPC, public/private subnets, IGW, NAT, routes | environment, project, CIDRs, AZs, `nat_per_az` | VPC ID, public/private subnet IDs, NAT IDs |
+| [`eks`](eks/README.md) | EKS cluster, managed node groups, OIDC, secrets encryption | Kubernetes version, private subnet IDs, API CIDRs, node groups, node cap | Cluster name/endpoint/CA, OIDC ARN/issuer |
+| [`iam`](iam/README.md) | Workload IRSA roles and scoped policies | OIDC provider, issuer, namespace/SA bindings, actions/resources | Role ARNs/names and bindings |
+| [`ecr`](ecr/README.md) | Private container repositories and lifecycle policies | service set, encryption type/KMS ARN, retention days | Repository names, URLs, ARNs |
+| [`dns`](dns/README.md) | Route53 zone, ACM certificate, DNS validation, optional ALB aliases | zone, hostnames, optional ALB name/zone ID | Zone ID, certificate ARN, validation records |
+| [`addons-bootstrap`](addons-bootstrap/README.md) | Pinned ArgoCD Helm release and Root Application | chart version, Config Repo URL/revision, timeout | ArgoCD release/root metadata |
+| [`github-oidc`](github-oidc/README.md) | GitHub Actions OIDC provider and CI roles | repository, branch, environment | Provider and role ARNs |
 
 ## How modules compose
 
@@ -36,3 +36,11 @@ Also run tflint and tfsec (or Checkov) for security scanning. Validate examples 
 ## Review checklist
 
 When reviewing module changes, verify: tags on all resources, timeouts, handling of unknown values, deletion behavior, least-privilege permissions, provider constraints, environment isolation, output completeness, documentation, and cost impact. Every module README should explain any external dependency or prerequisite that cannot be tested offline.
+
+## Related documentation
+
+- [Infrastructure README (parent)](../README.md)
+- [Python conformance tests](../policies/python/README.md)
+- [Live environment roots](../live/README.md)
+- [Platform requirements](../../.kiro/specs/gitops-platform/requirements.md)
+- [Terraform and AWS steering](../../.kiro/steering/10-terraform-aws.md)

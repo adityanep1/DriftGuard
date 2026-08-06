@@ -34,3 +34,11 @@ Feature: gitops-platform, Property N: <property text>
 3. Add or update tests and the nearest operational README.
 4. Run focused validation, then the applicable repository suite.
 5. Report modified paths, commands, results, warnings, and blocked runtime checks.
+
+## Related documentation
+
+- [Root README](../../../README.md)
+- [Steering files](../../steering/README.md)
+- [Infrastructure README](../../../driftguard-infra/README.md)
+- [Config Repo README](../../../driftguard-gitops/README.md)
+- [Demo Service README](../../../demo-service/README.md)

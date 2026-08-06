@@ -33,3 +33,11 @@ Before merging changes to an ApplicationSet, verify:
 - Destination namespaces are correct
 - Sync waves, `selfHeal`, retry limit 5, `CreateNamespace=true`, and `prune: false` are all set appropriately
 - Test additions, removals, and malformed targets to confirm the template handles them correctly
+
+## Related documentation
+
+- [Config Repo README (parent)](../README.md)
+- [Platform requirements](../../.kiro/specs/gitops-platform/requirements.md)
+- [GitOps and Kubernetes steering](../../.kiro/steering/20-gitops-kubernetes.md)
+- [Platform add-ons](../addons/README.md)
+- [AppProject security](../projects/README.md)

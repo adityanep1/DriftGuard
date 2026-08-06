@@ -22,3 +22,9 @@ This module does not manage any day-2 add-ons through Terraform. Once ArgoCD is 
 ## Safety properties
 
 The `prune: false` setting on the Root Application means ArgoCD will not delete resources that disappear from Git. This is a safety net during bootstrap. The tests in `test_platform_composition.py` verify that atomic install, wait, timeout, depends_on, and prune settings are all correctly declared.
+
+## Related documentation
+
+- [Module catalog](../README.md)
+- [Python conformance tests](../../policies/python/README.md)
+- [Live environment roots](../../live/README.md)

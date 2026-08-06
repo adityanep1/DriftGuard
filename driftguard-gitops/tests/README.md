@@ -53,3 +53,12 @@ This module validates the progressive delivery configuration:
 ## The Hypothesis approach
 
 When hypothesis is installed, the property tests generate randomized inputs (random combinations of pruning flags, project names, CIDR lists, credential strings, etc.) and verify the safety invariants hold universally. When hypothesis is not available, the tests iterate through a carefully chosen set of deterministic cases that cover the same logical space. Either way, the safety properties are thoroughly tested.
+
+## Related documentation
+
+- [Config Repo README (parent)](../README.md)
+- [Platform requirements](../../.kiro/specs/gitops-platform/requirements.md)
+- [Security and validation steering](../../.kiro/steering/30-security-validation.md)
+- [Conformance rules](../conformance/README.md)
+- [Rollouts analysis templates](../rollouts/README.md)
+- [Scripts (secret scanner)](../scripts/README.md)

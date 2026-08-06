@@ -36,3 +36,11 @@ After the bucket exists, each environment root uses a distinct key so their stat
 | dev | `env/dev/terraform.tfstate` |
 | staging | `env/staging/terraform.tfstate` |
 | prod | `env/prod/terraform.tfstate` |
+
+## Related documentation
+
+- [Infrastructure README (parent)](../README.md)
+- [Live environment roots](../live/README.md)
+- [Module catalog](../modules/README.md)
+- [Platform requirements](../../.kiro/specs/gitops-platform/requirements.md)
+- [Terraform and AWS steering](../../.kiro/steering/10-terraform-aws.md)

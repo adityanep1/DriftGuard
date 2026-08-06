@@ -1,0 +1,37 @@
+name: ci-demo-service
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'demo-service/**'
+  pull_request:
+    paths:
+      - 'demo-service/**'
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Install dependencies
+        run: pip install -r requirements.txt pytest httpx
+        working-directory: demo-service
+      - name: Run tests
+        run: pytest tests/ -q
+        working-directory: demo-service
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Docker image
+        run: docker build .
+        working-directory: demo-service
