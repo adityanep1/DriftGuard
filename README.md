@@ -69,6 +69,7 @@ A few non-negotiable rules that apply everywhere in this repository:
 
 Every major directory has its own README with detailed guidance:
 
+- Architecture diagrams (five focused views, generated as code): [docs/architecture/README.md](docs/architecture/README.md)
 - Infrastructure operations and provisioning: [driftguard-infra/README.md](driftguard-infra/README.md)
 - Terraform module contracts: [driftguard-infra/modules/README.md](driftguard-infra/modules/README.md)
 - Environment isolation: [driftguard-infra/live/README.md](driftguard-infra/live/README.md)
