@@ -77,5 +77,4 @@ When hypothesis is available, property tests generate randomized inputs and veri
 - [Infrastructure README](../../README.md)
 - [Module catalog](../../modules/README.md)
 - [Live environment roots](../../live/README.md)
-- [Platform requirements](../../../.kiro/specs/gitops-platform/requirements.md)
 - [Security and validation steering](../../../.kiro/steering/30-security-validation.md)

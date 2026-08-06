@@ -47,7 +47,6 @@ Runtime admission behavior still requires testing against a real Gatekeeper webh
 ## Related documentation
 
 - [Config Repo README (parent)](../README.md)
-- [Platform requirements](../../.kiro/specs/gitops-platform/requirements.md)
 - [Security and validation steering](../../.kiro/steering/30-security-validation.md)
 - [Admission policies](../policies/README.md)
 - [Test suite](../tests/README.md)

@@ -52,7 +52,6 @@ If you need to expand permissions (for example, adding a new CRD kind to a proje
 ## Related documentation
 
 - [Config Repo README (parent)](../README.md)
-- [Platform requirements](../../.kiro/specs/gitops-platform/requirements.md)
 - [GitOps and Kubernetes steering](../../.kiro/steering/20-gitops-kubernetes.md)
 - [Bootstrap](../bootstrap/README.md)
 - [Conformance rules](../conformance/README.md)

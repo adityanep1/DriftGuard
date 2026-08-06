@@ -71,7 +71,6 @@ Replace all `your-org` references, example account IDs, example domains, placeho
 ## Related documentation
 
 - [Root README](../README.md)
-- [Platform requirements](../.kiro/specs/gitops-platform/requirements.md)
 - [Terraform and AWS steering](../.kiro/steering/10-terraform-aws.md)
 - [CI workflow (ci-infra.yml)](../.github/workflows/ci-infra.yml)
 - [Module catalog](modules/README.md)

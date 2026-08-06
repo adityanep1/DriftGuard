@@ -52,7 +52,6 @@ When available, also run Kustomize rendering and schema checks. Full runtime val
 
 - [Config Repo README (parent)](../../README.md)
 - [Demo Service application repository](../../../demo-service/README.md)
-- [Platform requirements](../../../.kiro/specs/gitops-platform/requirements.md)
 - [GitOps and Kubernetes steering](../../../.kiro/steering/20-gitops-kubernetes.md)
 - [Rollouts analysis templates](../../rollouts/README.md)
 - [Observability and SLO](../../observability/README.md)

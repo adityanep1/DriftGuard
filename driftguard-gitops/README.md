@@ -70,7 +70,6 @@ Replace all `your-org` repository URLs, example domains, account IDs, and placeh
 ## Related documentation
 
 - [Root README](../README.md)
-- [Platform requirements](../.kiro/specs/gitops-platform/requirements.md)
 - [GitOps and Kubernetes steering](../.kiro/steering/20-gitops-kubernetes.md)
 - [CI workflow (ci-gitops.yml)](../.github/workflows/ci-gitops.yml)
 - [Pinned versions (versions.yaml)](versions.yaml)

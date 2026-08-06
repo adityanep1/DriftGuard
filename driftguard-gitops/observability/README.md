@@ -40,7 +40,6 @@ Metrics, logs, and traces each have different retention requirements and cost pr
 ## Related documentation
 
 - [Config Repo README (parent)](../README.md)
-- [Platform requirements](../../.kiro/specs/gitops-platform/requirements.md)
 - [GitOps and Kubernetes steering](../../.kiro/steering/20-gitops-kubernetes.md)
 - [SLO recording rules](slo/README.md)
 - [Rollouts analysis templates](../rollouts/README.md)

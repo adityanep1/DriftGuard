@@ -37,7 +37,6 @@ Before merging changes to an ApplicationSet, verify:
 ## Related documentation
 
 - [Config Repo README (parent)](../README.md)
-- [Platform requirements](../../.kiro/specs/gitops-platform/requirements.md)
 - [GitOps and Kubernetes steering](../../.kiro/steering/20-gitops-kubernetes.md)
 - [Platform add-ons](../addons/README.md)
 - [AppProject security](../projects/README.md)

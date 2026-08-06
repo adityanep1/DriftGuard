@@ -41,7 +41,6 @@ If ArgoCD is unhealthy, do not create or trust the Root Application. If the repo
 ## Related documentation
 
 - [Config Repo README (parent)](../README.md)
-- [Platform requirements](../../.kiro/specs/gitops-platform/requirements.md)
 - [GitOps and Kubernetes steering](../../.kiro/steering/20-gitops-kubernetes.md)
 - [AppProject security](../projects/README.md)
 - [ArgoCD bootstrap module (Terraform)](../../driftguard-infra/modules/addons-bootstrap/README.md)

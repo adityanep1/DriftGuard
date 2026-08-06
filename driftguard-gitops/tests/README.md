@@ -57,7 +57,6 @@ When hypothesis is installed, the property tests generate randomized inputs (ran
 ## Related documentation
 
 - [Config Repo README (parent)](../README.md)
-- [Platform requirements](../../.kiro/specs/gitops-platform/requirements.md)
 - [Security and validation steering](../../.kiro/steering/30-security-validation.md)
 - [Conformance rules](../conformance/README.md)
 - [Rollouts analysis templates](../rollouts/README.md)

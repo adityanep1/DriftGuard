@@ -37,7 +37,6 @@ For runtime validation, inspect ExternalSecret conditions, verify Secret data ke
 ## Related documentation
 
 - [Config Repo README (parent)](../README.md)
-- [Platform requirements](../../.kiro/specs/gitops-platform/requirements.md)
 - [Security and validation steering](../../.kiro/steering/30-security-validation.md)
 - [Scripts (secret scanner)](../scripts/README.md)
 - [IAM and IRSA module (Terraform)](../../driftguard-infra/modules/iam/README.md)

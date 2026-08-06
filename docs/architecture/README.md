@@ -96,8 +96,6 @@ python embed_icons_in_svg.py diagrams/01-two-layer-control.svg
 
 ## Related documentation
 
-- Full written design and the original Mermaid diagrams: [design.md](../../.kiro/specs/gitops-platform/design.md)
-- Requirements this architecture satisfies: [requirements.md](../../.kiro/specs/gitops-platform/requirements.md)
 - Infrastructure layer: [driftguard-infra/README.md](../../driftguard-infra/README.md)
 - GitOps layer: [driftguard-gitops/README.md](../../driftguard-gitops/README.md)
 - Project overview: [root README](../../README.md)

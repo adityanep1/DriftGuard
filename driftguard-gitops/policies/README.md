@@ -40,7 +40,6 @@ When reviewing a policy change, check: match kinds, namespaces, enforcement acti
 ## Related documentation
 
 - [Config Repo README (parent)](../README.md)
-- [Platform requirements](../../.kiro/specs/gitops-platform/requirements.md)
 - [Security and validation steering](../../.kiro/steering/30-security-validation.md)
 - [Conformance rules](../conformance/README.md)
 - [AppProject security](../projects/README.md)

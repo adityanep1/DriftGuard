@@ -34,7 +34,6 @@ The Prometheus address, query windows, thresholds, pause durations, and service 
 ## Related documentation
 
 - [Config Repo README (parent)](../README.md)
-- [Platform requirements](../../.kiro/specs/gitops-platform/requirements.md)
 - [GitOps and Kubernetes steering](../../.kiro/steering/20-gitops-kubernetes.md)
 - [Observability and SLO](../observability/slo/README.md)
 - [Workload manifests](../workloads/demo-service/README.md)

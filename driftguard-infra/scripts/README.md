@@ -79,5 +79,4 @@ Do not run smoke, integration, apply, or teardown scripts against production or 
 - [Module catalog](../modules/README.md)
 - [Live environment roots](../live/README.md)
 - [Python conformance tests](../policies/python/README.md)
-- [Platform requirements](../../.kiro/specs/gitops-platform/requirements.md)
 - [Terraform and AWS steering](../../.kiro/steering/10-terraform-aws.md)

@@ -50,5 +50,4 @@ A failed `plan` causes no infrastructure changes. A failed `apply` requires insp
 - [Module catalog](../modules/README.md)
 - [State backend bootstrap](../bootstrap/README.md)
 - [Validation scripts](../scripts/README.md)
-- [Platform requirements](../../.kiro/specs/gitops-platform/requirements.md)
 - [Terraform and AWS steering](../../.kiro/steering/10-terraform-aws.md)

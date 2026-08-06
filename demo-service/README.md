@@ -48,7 +48,6 @@ The pipeline has multiple stop points to prevent bad deployments:
 ## Related documentation
 
 - [Root README](../README.md)
-- [Platform requirements](../.kiro/specs/gitops-platform/requirements.md)
 - [CI workflow (ci-demo-service.yml)](../.github/workflows/ci-demo-service.yml)
 - [GitOps workload manifests](../driftguard-gitops/workloads/demo-service/README.md)
 - [Dockerfile](Dockerfile)

@@ -42,5 +42,4 @@ When reviewing module changes, verify: tags on all resources, timeouts, handling
 - [Infrastructure README (parent)](../README.md)
 - [Python conformance tests](../policies/python/README.md)
 - [Live environment roots](../live/README.md)
-- [Platform requirements](../../.kiro/specs/gitops-platform/requirements.md)
 - [Terraform and AWS steering](../../.kiro/steering/10-terraform-aws.md)

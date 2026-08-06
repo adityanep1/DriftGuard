@@ -38,5 +38,4 @@ These tests run offline and validate tag completeness, security group safety, EK
 - [Infrastructure README (parent)](../README.md)
 - [Python conformance helpers](python/README.md)
 - [Module catalog](../modules/README.md)
-- [Platform requirements](../../.kiro/specs/gitops-platform/requirements.md)
 - [Security and validation steering](../../.kiro/steering/30-security-validation.md)

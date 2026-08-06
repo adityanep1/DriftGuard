@@ -28,7 +28,6 @@ Do not remove the controller before removing claims, or you will end up with orp
 ## Related documentation
 
 - [Config Repo README (parent)](../../README.md)
-- [Platform requirements](../../../.kiro/specs/gitops-platform/requirements.md)
 - [GitOps and Kubernetes steering](../../../.kiro/steering/20-gitops-kubernetes.md)
 - [Bootstrap](../../bootstrap/README.md)
 - [AppProject security](../../projects/README.md)

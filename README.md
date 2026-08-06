@@ -94,7 +94,6 @@ DriftGuard splits into two control layers: Terraform provisions the AWS substrat
 Every major directory has its own README with detailed guidance:
 
 - Architecture diagrams (five focused views, generated as code): [docs/architecture/README.md](docs/architecture/README.md)
-- Blog posts (dev.to and AWS Community): [posts/](posts/)
 - Infrastructure operations and provisioning: [driftguard-infra/README.md](driftguard-infra/README.md)
 - Terraform module contracts: [driftguard-infra/modules/README.md](driftguard-infra/modules/README.md)
 - Environment isolation: [driftguard-infra/live/README.md](driftguard-infra/live/README.md)
@@ -108,13 +107,6 @@ Every major directory has its own README with detailed guidance:
 - Demo workload delivery: [driftguard-gitops/workloads/demo-service/README.md](driftguard-gitops/workloads/demo-service/README.md)
 - GitOps test suite: [driftguard-gitops/tests/README.md](driftguard-gitops/tests/README.md)
 
-## Platform specifications
-
-The formal platform specification lives in the `.kiro/specs/gitops-platform/` directory and covers the full requirements, architecture, and implementation plan:
-
-- [Requirements](.kiro/specs/gitops-platform/requirements.md): User stories, acceptance criteria, and security constraints
-- [Design](.kiro/specs/gitops-platform/design.md): Architecture, ownership boundaries, component interfaces, and test strategy
-- [Tasks](.kiro/specs/gitops-platform/tasks.md): Implementation sequence, property-test obligations, and task status
 
 ## Development guidance
 
