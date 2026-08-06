@@ -1,0 +1,55 @@
+name: ci-gitops
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'driftguard-gitops/**'
+  pull_request:
+    paths:
+      - 'driftguard-gitops/**'
+
+permissions:
+  contents: read
+
+jobs:
+  secret-scanner:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Reject plaintext secrets
+        run: python scripts/scan_no_plaintext_secrets.py .
+        working-directory: driftguard-gitops
+
+  conftest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install conftest
+        run: |
+          curl -fsSL -o conftest.tar.gz https://github.com/open-policy-agent/conftest/releases/download/v0.56.0/conftest_0.56.0_Linux_x86_64.tar.gz
+          tar -xzf conftest.tar.gz conftest
+          sudo install conftest /usr/local/bin/conftest
+      - name: Check ArgoCD invariants
+        run: |
+          find . -type f \( -name '*.yaml' -o -name '*.yml' \) \
+            ! -path './.github/*' \
+            ! -name '.pre-commit-config.yaml' \
+            -print0 | xargs -0 -n1 conftest test --all-namespaces --policy conformance
+        working-directory: driftguard-gitops
+
+  pytest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Install test dependencies
+        run: pip install pytest hypothesis pyyaml
+      - name: Run tests
+        run: python -m pytest tests -q
+        working-directory: driftguard-gitops
