@@ -52,3 +52,14 @@ note.txt
 todo.md
 REVIEW_FINDINGS.md
 SWE_DevOps_AWS_Portfolio_Roadmap.md
+
+# === Kiro internal specs (planning documents, not shipped code) ===
+.kiro/specs/gitops-platform/tasks.md
+
+# === Personal/portfolio content (not part of the platform) ===
+posts/
+
+# === Architecture diagram generators (dev-only tooling, not runtime) ===
+docs/architecture/generate_architecture.py
+docs/architecture/embed_icons_in_svg.py
+docs/architecture/diagrams/

@@ -1,16 +1,5 @@
 # DriftGuard Architecture Diagrams
 
-The DriftGuard architecture is large, so rather than one crowded picture it is
-broken into five focused views. Each view stays close to fifteen nodes, shares
-the same styling, and uses one consistent edge-color legend. The diagrams are
-generated as code with the [`diagrams`](https://github.com/mingrammer/diagrams)
-library, so they live in source control, diff cleanly, and regenerate with a
-single command.
-
-Every diagram is written as both PNG (for quick GitHub previews) and SVG (sharp,
-selectable, and self-contained). The SVGs have their icons inlined as base64, so
-they render correctly anywhere, including on GitHub and in slides.
-
 ## The five views
 
 ### 1. Two-layer control model
@@ -66,33 +55,6 @@ The same legend applies to every diagram so the flows read consistently:
 | Light gray dashed | Supporting, background, or optional flow |
 | Green | Identity, secrets, and policy flow |
 | Red dashed | Failure, abort, and rollback path |
-
-## Regenerating the diagrams
-
-You need the `diagrams` Python package and the Graphviz system binary (the
-package shells out to `dot`).
-
-```bash
-pip install diagrams
-# Graphviz: apt install graphviz  |  brew install graphviz  |  dnf install graphviz
-python generate_architecture.py
-```
-
-The script writes both formats into `diagrams/` and then inlines every SVG icon
-so the files stay portable. If you only need to make an existing SVG portable,
-run the helper directly:
-
-```bash
-python embed_icons_in_svg.py diagrams/01-two-layer-control.svg
-```
-
-## Files
-
-| File | Purpose |
-|---|---|
-| `generate_architecture.py` | The generator. Edit the `build_*` functions to change a view. |
-| `embed_icons_in_svg.py` | Inlines SVG icons as base64 so the files render anywhere. |
-| `diagrams/` | The rendered PNG and SVG output. |
 
 ## Related documentation
 
