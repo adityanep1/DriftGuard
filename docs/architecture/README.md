@@ -9,7 +9,7 @@ substrate and performs a one-time ArgoCD install, then ArgoCD owns declarative
 day 2 reconciliation of everything inside the cluster. This is the boundary that
 everything else follows.
 
-![Two-layer control model](diagrams/01-two-layer-control.svg)
+![Two-layer control model](diagrams/01-two-layer-control.png)
 
 ### 2. AWS infrastructure and network topology
 
@@ -17,7 +17,7 @@ The per-environment VPC: public subnets for the load balancer and NAT, private
 subnets for the worker nodes, and the supporting services (ECR, Route53, ACM,
 KMS, and the S3 plus DynamoDB state backend).
 
-![AWS infrastructure](diagrams/02-aws-infrastructure.svg)
+![AWS infrastructure](diagrams/02-aws-infrastructure.png)
 
 ### 3. GitOps control plane
 
@@ -25,7 +25,7 @@ How the Root_Application fans out through AppProjects and ApplicationSets into
 the add-on and workload Applications. This is the app-of-apps pattern that lets
 adding or removing a service be a single Git change.
 
-![GitOps control plane](diagrams/03-gitops-control-plane.svg)
+![GitOps control plane](diagrams/03-gitops-control-plane.png)
 
 ### 4. CI/CD delivery
 
@@ -33,7 +33,7 @@ The pull-based delivery contract: CI builds, tests, scans, and publishes the
 image using short-lived OIDC credentials, then commits the new tag to the
 Config_Repo. ArgoCD reconciles from Git. CI never runs `kubectl apply`.
 
-![CI/CD delivery](diagrams/04-cicd-delivery.svg)
+![CI/CD delivery](diagrams/04-cicd-delivery.png)
 
 ### 5. In-cluster runtime and progressive delivery
 
@@ -42,7 +42,7 @@ analysis against Prometheus with abort-and-rollback on breach, the LGTM
 observability stack fed by the OpenTelemetry Collector, and External Secrets
 pulling from AWS Secrets Manager.
 
-![Runtime and progressive delivery](diagrams/05-runtime-delivery.svg)
+![Runtime and progressive delivery](diagrams/05-runtime-delivery.png)
 
 ## Edge-color legend
 
