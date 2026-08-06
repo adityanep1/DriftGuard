@@ -6,8 +6,10 @@ resources:
   - service-canary.yaml
   - ingress.yaml
   - rollout.yaml
-  - ../../../rollouts/analysis-templates.yaml
-commonLabels:
-  app.kubernetes.io/part-of: driftguard
-  Project: DriftGuard
-  ManagedBy: ArgoCD
+  - analysis-templates.yaml
+labels:
+  - pairs:
+      app.kubernetes.io/part-of: driftguard
+      Project: DriftGuard
+      ManagedBy: ArgoCD
+    includeSelectors: false

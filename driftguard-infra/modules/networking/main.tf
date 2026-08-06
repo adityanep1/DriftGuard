@@ -4,8 +4,8 @@ data "aws_availability_zones" "available" {
 
 locals {
   selected_azs   = length(var.availability_zones) == 0 ? slice(data.aws_availability_zones.available.names, 0, 2) : var.availability_zones
-  subnet_indices = { for index, az in local.selected_azs : index => az }
-  nat_indices    = (var.environment == "prod" || var.nat_per_az) ? toset(range(length(local.selected_azs))) : toset([0])
+  subnet_indices = { for index, az in local.selected_azs : tostring(index) => az }
+  nat_indices    = (var.environment == "prod" || var.nat_per_az) ? toset([for index in range(length(local.selected_azs)) : tostring(index)]) : toset(["0"])
   required_tags = {
     Environment = var.environment
     Project     = var.project
@@ -64,6 +64,8 @@ resource "aws_subnet" "private" {
   tags = merge(local.required_tags, {
     "kubernetes.io/role/internal-elb"           = "1"
     "kubernetes.io/cluster/${var.cluster_name}" = "shared"
+    # Karpenter discovers node subnets by this tag; value is unique per cluster.
+    "karpenter.sh/discovery" = var.cluster_name
   })
 }
 

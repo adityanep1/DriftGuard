@@ -39,13 +39,16 @@ metadata:
     app.kubernetes.io/part-of: driftguard
 spec:
   amiFamily: AL2023
-  role: driftguard-prod-nodes
+  # The node IAM role and discovery tag are environment-specific and are set by
+  # each overlay. The values below are placeholders overwritten per environment;
+  # they intentionally reference no real cluster so an unpatched base cannot run.
+  role: REPLACE_WITH_NODE_ROLE
   subnetSelectorTerms:
     - tags:
-        kubernetes.io/role/internal-elb: "1"
+        karpenter.sh/discovery: REPLACE_WITH_CLUSTER_NAME
   securityGroupSelectorTerms:
     - tags:
-        aws:eks:cluster-name: driftguard-prod
+        karpenter.sh/discovery: REPLACE_WITH_CLUSTER_NAME
   blockDeviceMappings:
     - deviceName: /dev/xvda
       ebs:

@@ -31,6 +31,7 @@ module "iam" {
   project                   = "driftguard"
   cluster_oidc_provider_arn = module.eks.oidc_provider_arn
   oidc_issuer_url           = module.eks.oidc_issuer_url
+  workloads                 = var.irsa_workloads
 }
 
 module "ecr" {
@@ -109,4 +110,9 @@ output "terraform_plan_role_arn" {
 output "terraform_drift_role_arn" {
   description = "GitHub Actions role ARN for Terraform drift-check (branch-only trust)."
   value       = module.github_oidc.terraform_drift_role_arn
+}
+
+output "irsa_role_arns" {
+  description = "IRSA role ARNs keyed by workload; use these in the ServiceAccount eks.amazonaws.com/role-arn annotation."
+  value       = module.iam.role_arns
 }

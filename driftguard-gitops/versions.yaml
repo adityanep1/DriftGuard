@@ -1,4 +1,4 @@
-terraform: "1.15.3"
+terraform: "1.9.8"
 argocd:
   chart: "7.7.16"
   app: "v2.13.3"

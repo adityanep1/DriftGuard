@@ -98,3 +98,25 @@ variable "github_repository" {
     error_message = "github_repository must be OWNER/REPOSITORY."
   }
 }
+
+variable "irsa_workloads" {
+  description = "IRSA roles created for in-cluster workloads. The demo-service default grants read-only access to Secrets Manager secrets under driftguard/* so the External Secrets Operator SecretStore can materialize them."
+  type = map(object({
+    namespace       = string
+    service_account = string
+    policy_statements = list(object({
+      actions   = set(string)
+      resources = set(string)
+    }))
+  }))
+  default = {
+    demo-service = {
+      namespace       = "demo-prod"
+      service_account = "demo-service"
+      policy_statements = [{
+        actions   = ["secretsmanager:GetSecretValue", "secretsmanager:DescribeSecret"]
+        resources = ["arn:aws:secretsmanager:*:*:secret:driftguard/*"]
+      }]
+    }
+  }
+}

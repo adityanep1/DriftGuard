@@ -31,6 +31,7 @@ module "iam" {
   project                   = "driftguard"
   cluster_oidc_provider_arn = module.eks.oidc_provider_arn
   oidc_issuer_url           = module.eks.oidc_issuer_url
+  workloads                 = var.irsa_workloads
 }
 
 module "ecr" {
@@ -89,6 +90,11 @@ output "max_node_count" {
 output "dns_certificate_arn" {
   description = "Validated ACM certificate ARN when DNS is enabled."
   value       = var.enable_dns ? module.dns[0].certificate_arn : null
+}
+
+output "irsa_role_arns" {
+  description = "IRSA role ARNs keyed by workload; use these in the ServiceAccount eks.amazonaws.com/role-arn annotation."
+  value       = module.iam.role_arns
 }
 
 output "ecr_publish_role_arn" {
