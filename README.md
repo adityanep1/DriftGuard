@@ -65,11 +65,36 @@ A few non-negotiable rules that apply everywhere in this repository:
 - Do not run `terraform apply`, `terraform destroy`, or integration scripts without an explicitly identified safe target and account.
 - Replace all `your-org` placeholders, example account IDs, and example domains before any real deployment.
 
+## Architecture at a glance
+
+DriftGuard splits into two control layers: Terraform provisions the AWS substrate (day 0/1), then hands off to ArgoCD for continuous reconciliation (day 2). The diagrams below are generated as code and live in [docs/architecture/](docs/architecture/README.md).
+
+### The two-layer control model
+
+![Two-layer control model](docs/architecture/diagrams/01-two-layer-control.png)
+
+### AWS infrastructure (per environment)
+
+![AWS infrastructure topology](docs/architecture/diagrams/02-aws-infrastructure.png)
+
+### GitOps control plane
+
+![GitOps app-of-apps and ApplicationSets](docs/architecture/diagrams/03-gitops-control-plane.png)
+
+### CI/CD delivery (pull-based, no direct cluster mutation)
+
+![CI/CD delivery flow](docs/architecture/diagrams/04-cicd-delivery.png)
+
+### In-cluster runtime and progressive delivery
+
+![Runtime: canary rollout, observability, and secrets](docs/architecture/diagrams/05-runtime-delivery.png)
+
 ## Documentation map
 
 Every major directory has its own README with detailed guidance:
 
 - Architecture diagrams (five focused views, generated as code): [docs/architecture/README.md](docs/architecture/README.md)
+- Blog posts (dev.to and AWS Community): [posts/](posts/)
 - Infrastructure operations and provisioning: [driftguard-infra/README.md](driftguard-infra/README.md)
 - Terraform module contracts: [driftguard-infra/modules/README.md](driftguard-infra/modules/README.md)
 - Environment isolation: [driftguard-infra/live/README.md](driftguard-infra/live/README.md)
