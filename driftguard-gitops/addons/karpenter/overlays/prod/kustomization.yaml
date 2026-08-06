@@ -1,0 +1,20 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../../base
+patches:
+  - target:
+      group: karpenter.k8s.aws
+      version: v1beta1
+      kind: EC2NodeClass
+      name: driftguard-default
+    patch: |
+      - op: replace
+        path: /spec/role
+        value: driftguard-prod-nodes
+      - op: replace
+        path: /spec/subnetSelectorTerms/0/tags/karpenter.sh~1discovery
+        value: driftguard-prod
+      - op: replace
+        path: /spec/securityGroupSelectorTerms/0/tags/karpenter.sh~1discovery
+        value: driftguard-prod

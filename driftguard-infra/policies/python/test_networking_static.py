@@ -24,7 +24,9 @@ def test_networking_has_two_tier_route_topology():
 
 
 def test_prod_nat_shape_and_private_node_contract_are_declared():
-    assert '(var.environment == "prod" || var.nat_per_az) ? toset(range(length(local.selected_azs))) : toset([0])' in MAIN
+    # Prod (or nat_per_az) creates one NAT per AZ; otherwise a single NAT keyed "0".
+    # for_each requires a set of strings, so the indices are stringified.
+    assert '(var.environment == "prod" || var.nat_per_az) ? toset([for index in range(length(local.selected_azs)) : tostring(index)]) : toset(["0"])' in MAIN
     assert '"kubernetes.io/role/internal-elb"' in MAIN
     assert 'private_subnet_ids' in OUTPUTS
     assert 'public_subnet_ids' in OUTPUTS

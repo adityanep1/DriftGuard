@@ -29,7 +29,7 @@ variable "alb_zone_id" {
   default     = null
   nullable    = true
   validation {
-    condition     = var.alb_dns_name == null || (var.alb_zone_id != null && length(trimspace(var.alb_zone_id)) > 0)
+    condition     = var.alb_dns_name == null || try(length(trimspace(var.alb_zone_id)) > 0, false)
     error_message = "alb_zone_id is required when alb_dns_name is set."
   }
 }

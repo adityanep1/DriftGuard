@@ -2,6 +2,11 @@
 # Chart: loki (https://grafana.github.io/helm-charts)
 # Log aggregation backend for the LGTM stack.
 
+# Run Loki in single-binary mode for a cost-conscious dev footprint. The chart
+# rejects non-zero replicas on both single-binary and simple-scalable targets at
+# once, so the scalable targets are explicitly zeroed.
+deploymentMode: SingleBinary
+
 loki:
   auth_enabled: false
   limits_config:
@@ -10,9 +15,26 @@ loki:
     type: filesystem
   commonConfig:
     replication_factor: 1
+  # Chart 6.x requires an explicit schema config; use the current TSDB schema.
+  schemaConfig:
+    configs:
+      - from: "2024-04-01"
+        store: tsdb
+        object_store: filesystem
+        schema: v13
+        index:
+          prefix: loki_index_
+          period: 24h
 
 gateway:
   enabled: true
 
 singleBinary:
   replicas: 1
+
+read:
+  replicas: 0
+write:
+  replicas: 0
+backend:
+  replicas: 0

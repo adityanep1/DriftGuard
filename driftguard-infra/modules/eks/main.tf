@@ -139,6 +139,12 @@ resource "aws_eks_cluster" "this" {
 
   tags = local.required_tags
 
+  lifecycle {
+    # bootstrap_self_managed_addons is fixed at cluster creation and cannot be
+    # toggled in place; ignoring it keeps an imported cluster from being replaced.
+    ignore_changes = [bootstrap_self_managed_addons]
+  }
+
   depends_on = [
     aws_iam_role_policy_attachment.cluster_policy,
     aws_kms_key.eks_secrets,
@@ -152,6 +158,14 @@ resource "aws_iam_openid_connect_provider" "this" {
   tags            = local.required_tags
 
   depends_on = [aws_eks_cluster.this]
+}
+
+# Tag the EKS-managed cluster security group so Karpenter can discover it by the
+# standard karpenter.sh/discovery convention (value is unique per cluster).
+resource "aws_ec2_tag" "cluster_sg_karpenter_discovery" {
+  resource_id = aws_eks_cluster.this.vpc_config[0].cluster_security_group_id
+  key         = "karpenter.sh/discovery"
+  value       = var.name
 }
 
 resource "aws_eks_node_group" "this" {

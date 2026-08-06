@@ -1,3 +1,37 @@
+# Illustrative blue-green Rollout. This file is NOT part of the base kustomization
+# (the base uses the canary rollout.yaml). Copy it into its own kustomization if
+# you want to run demo-service with a blue-green strategy instead of canary. It is
+# self-contained: it ships both the active and preview Services it references.
+apiVersion: v1
+kind: Service
+metadata:
+  name: demo-service-bluegreen-active
+  labels:
+    app.kubernetes.io/name: demo-service-bluegreen-example
+    app.kubernetes.io/part-of: driftguard
+spec:
+  selector:
+    app.kubernetes.io/name: demo-service-bluegreen-example
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: demo-service-bluegreen-preview
+  labels:
+    app.kubernetes.io/name: demo-service-bluegreen-example
+    app.kubernetes.io/part-of: driftguard
+spec:
+  selector:
+    app.kubernetes.io/name: demo-service-bluegreen-example
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+---
 apiVersion: argoproj.io/v1alpha1
 kind: Rollout
 metadata:
@@ -17,15 +51,29 @@ spec:
         app.kubernetes.io/part-of: driftguard
     spec:
       serviceAccountName: demo-service
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: demo-service
           image: ghcr.io/your-org/demo-service:REPLACE_WITH_COMMIT_SHA
           ports:
             - name: http
               containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            periodSeconds: 5
+            timeoutSeconds: 2
   strategy:
     blueGreen:
-      activeService: demo-service
-      previewService: demo-service-preview
+      activeService: demo-service-bluegreen-active
+      previewService: demo-service-bluegreen-preview
       autoPromotionEnabled: false
       scaleDownDelaySeconds: 30
+      prePromotionAnalysis:
+        templates:
+          - templateName: demo-service-error-rate
+          - templateName: demo-service-p95-latency

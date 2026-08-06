@@ -3,8 +3,25 @@ kind: Kustomization
 namespace: demo-prod
 resources:
   - ../../base
-commonLabels:
-  Environment: prod
+labels:
+  - pairs:
+      Environment: prod
+    includeSelectors: false
+patches:
+  - target:
+      kind: Ingress
+      name: demo-service
+    patch: |
+      - op: replace
+        path: /spec/rules/0/host
+        value: demo.example.invalid
+  - target:
+      kind: ServiceAccount
+      name: demo-service
+    patch: |
+      - op: replace
+        path: /metadata/annotations/eks.amazonaws.com~1role-arn
+        value: arn:aws:iam::123456789012:role/driftguard-prod-demo-service
 images:
   - name: ghcr.io/your-org/demo-service
     newName: 123456789012.dkr.ecr.us-east-1.amazonaws.com/driftguard-prod/demo-service
