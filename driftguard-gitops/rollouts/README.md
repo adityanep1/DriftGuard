@@ -30,3 +30,12 @@ When a Prometheus test environment is available, seed clean data, breaching data
 ## Keeping things aligned
 
 The Prometheus address, query windows, thresholds, pause durations, and service selectors in these templates must stay in sync with the workload Service definition and the SLO recording rules in `observability/slo/`. If you change a metric name or label, you need to update the service instrumentation, recording rules, analysis templates, dashboard panels, and test fixtures together.
+
+## Related documentation
+
+- [Config Repo README (parent)](../README.md)
+- [Platform requirements](../../.kiro/specs/gitops-platform/requirements.md)
+- [GitOps and Kubernetes steering](../../.kiro/steering/20-gitops-kubernetes.md)
+- [Observability and SLO](../observability/slo/README.md)
+- [Workload manifests](../workloads/demo-service/README.md)
+- [Test suite](../tests/README.md)

@@ -23,7 +23,7 @@ The `live/dev`, `live/staging`, and `live/prod` roots each compose these modules
 
 ## Required toolchain
 
-The project uses Terraform `1.15.3` with the AWS provider constrained to `~> 5.0`. Helm, Kubernetes, and TLS providers are pinned in module and provider files. Always commit provider lock files after changes.
+The project uses Terraform `1.9.8` with the AWS provider constrained to `~> 5.0`. Helm, Kubernetes, and TLS providers are pinned in module and provider files. Always commit provider lock files after changes.
 
 For full validation, you will also need: Python 3.11+, pytest, tflint, tfsec (or Checkov), conftest/OPA, kubeconform, and optionally promtool for GitOps rule validation.
 
@@ -67,3 +67,16 @@ Commands like `terraform apply`, `terraform destroy`, and the integration/smoke 
 ## Before your first real deployment
 
 Replace all `your-org` references, example account IDs, example domains, placeholder ARNs, and test-only values with your actual configuration. Never solve a missing secret by placing it directly in Terraform variables, GitHub workflow files, state fixtures, or GitOps YAML.
+
+## Related documentation
+
+- [Root README](../README.md)
+- [Platform requirements](../.kiro/specs/gitops-platform/requirements.md)
+- [Terraform and AWS steering](../.kiro/steering/10-terraform-aws.md)
+- [CI workflow (ci-infra.yml)](../.github/workflows/ci-infra.yml)
+- [Module catalog](modules/README.md)
+- [Live environment roots](live/README.md)
+- [Conformance policies](policies/README.md)
+- [Python conformance tests](policies/python/README.md)
+- [Validation and teardown scripts](scripts/README.md)
+- [State backend bootstrap](bootstrap/README.md)

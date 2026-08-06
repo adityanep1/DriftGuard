@@ -23,3 +23,9 @@ Keep ECR and Terraform permissions in separate roles when the deployment model a
 ## Validation
 
 Run Terraform validation and IAM security checks. In the GitHub workflow, confirm that `id-token: write` permission is set, no static access key variables exist, and CI cannot use cluster credentials for normal GitOps delivery (that is ArgoCD's job, not CI's).
+
+## Related documentation
+
+- [Module catalog](../README.md)
+- [Python conformance tests](../../policies/python/README.md)
+- [Live environment roots](../../live/README.md)

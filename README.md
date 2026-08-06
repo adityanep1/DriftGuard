@@ -24,11 +24,11 @@ Once Terraform installs ArgoCD and seeds the Root Application, Layer A steps bac
 
 If you are new to this codebase, here is a good reading order:
 
-1. Start with `driftguard-infra/README.md` to understand how the AWS foundation is provisioned and what safety gates are in place.
-2. Read `driftguard-gitops/README.md` to understand the ArgoCD ownership boundary and how Kubernetes state is managed through Git.
-3. Check out `demo-service/README.md` to see how application code flows from source to production through the delivery pipeline.
-4. Browse `driftguard-infra/modules/README.md` for the Terraform module catalog and their contracts.
-5. Look at `driftguard-gitops/bootstrap/README.md` to understand how Terraform hands off control to ArgoCD.
+1. Start with [driftguard-infra/README.md](driftguard-infra/README.md) to understand how the AWS foundation is provisioned and what safety gates are in place.
+2. Read [driftguard-gitops/README.md](driftguard-gitops/README.md) to understand the ArgoCD ownership boundary and how Kubernetes state is managed through Git.
+3. Check out [demo-service/README.md](demo-service/README.md) to see how application code flows from source to production through the delivery pipeline.
+4. Browse [driftguard-infra/modules/README.md](driftguard-infra/modules/README.md) for the Terraform module catalog and their contracts.
+5. Look at [driftguard-gitops/bootstrap/README.md](driftguard-gitops/bootstrap/README.md) to understand how Terraform hands off control to ArgoCD.
 
 ## Safe local checks
 
@@ -69,15 +69,35 @@ A few non-negotiable rules that apply everywhere in this repository:
 
 Every major directory has its own README with detailed guidance:
 
-- Infrastructure operations and provisioning: `driftguard-infra/README.md`
-- Terraform module contracts: `driftguard-infra/modules/README.md`
-- Environment isolation: `driftguard-infra/live/README.md`
-- Validation and teardown scripts: `driftguard-infra/scripts/README.md`
-- Policy conformance tests: `driftguard-infra/policies/python/README.md`
-- GitOps bootstrap and handoff: `driftguard-gitops/bootstrap/README.md`
-- AppProject security model: `driftguard-gitops/projects/README.md`
-- Admission policies: `driftguard-gitops/policies/README.md`
-- Conformance rules: `driftguard-gitops/conformance/README.md`
-- Observability stack: `driftguard-gitops/observability/README.md`
-- Demo workload delivery: `driftguard-gitops/workloads/demo-service/README.md`
-- GitOps test suite: `driftguard-gitops/tests/README.md`
+- Infrastructure operations and provisioning: [driftguard-infra/README.md](driftguard-infra/README.md)
+- Terraform module contracts: [driftguard-infra/modules/README.md](driftguard-infra/modules/README.md)
+- Environment isolation: [driftguard-infra/live/README.md](driftguard-infra/live/README.md)
+- Validation and teardown scripts: [driftguard-infra/scripts/README.md](driftguard-infra/scripts/README.md)
+- Policy conformance tests: [driftguard-infra/policies/python/README.md](driftguard-infra/policies/python/README.md)
+- GitOps bootstrap and handoff: [driftguard-gitops/bootstrap/README.md](driftguard-gitops/bootstrap/README.md)
+- AppProject security model: [driftguard-gitops/projects/README.md](driftguard-gitops/projects/README.md)
+- Admission policies: [driftguard-gitops/policies/README.md](driftguard-gitops/policies/README.md)
+- Conformance rules: [driftguard-gitops/conformance/README.md](driftguard-gitops/conformance/README.md)
+- Observability stack: [driftguard-gitops/observability/README.md](driftguard-gitops/observability/README.md)
+- Demo workload delivery: [driftguard-gitops/workloads/demo-service/README.md](driftguard-gitops/workloads/demo-service/README.md)
+- GitOps test suite: [driftguard-gitops/tests/README.md](driftguard-gitops/tests/README.md)
+
+## Platform specifications
+
+The formal platform specification lives in the `.kiro/specs/gitops-platform/` directory and covers the full requirements, architecture, and implementation plan:
+
+- [Requirements](.kiro/specs/gitops-platform/requirements.md): User stories, acceptance criteria, and security constraints
+- [Design](.kiro/specs/gitops-platform/design.md): Architecture, ownership boundaries, component interfaces, and test strategy
+- [Tasks](.kiro/specs/gitops-platform/tasks.md): Implementation sequence, property-test obligations, and task status
+
+## Development guidance
+
+The [steering files](.kiro/steering/README.md) provide workspace-level guidance for working in this monorepo. They cover engineering conventions, Terraform and AWS rules, GitOps and Kubernetes patterns, security validation, and documentation standards. The steering files activate automatically based on which files you are editing.
+
+## Continuous integration
+
+Root-level GitHub Actions workflows run validation for each sub-project whenever its files change:
+
+- [ci-infra.yml](.github/workflows/ci-infra.yml): Terraform formatting, Python conformance tests, and conftest policy checks for `driftguard-infra/`
+- [ci-gitops.yml](.github/workflows/ci-gitops.yml): Secret scanning, conftest conformance, and pytest for `driftguard-gitops/`
+- [ci-demo-service.yml](.github/workflows/ci-demo-service.yml): Pytest and Docker build for `demo-service/`

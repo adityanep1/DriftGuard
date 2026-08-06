@@ -36,3 +36,12 @@ Runtime validation (confirming component readiness, telemetry freshness, dashboa
 ## Retention and cost considerations
 
 Metrics, logs, and traces each have different retention requirements and cost profiles. Before making changes to production configuration, review storage class, replication factor, retention period, ingestion rate, and alert volume. Do not use production-sized retention or replica counts in dev without an explicit cost justification.
+
+## Related documentation
+
+- [Config Repo README (parent)](../README.md)
+- [Platform requirements](../../.kiro/specs/gitops-platform/requirements.md)
+- [GitOps and Kubernetes steering](../../.kiro/steering/20-gitops-kubernetes.md)
+- [SLO recording rules](slo/README.md)
+- [Rollouts analysis templates](../rollouts/README.md)
+- [Test suite](../tests/README.md)

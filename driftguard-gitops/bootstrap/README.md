@@ -37,3 +37,11 @@ The bootstrap tree has strict rules:
 ## What to do when things go wrong
 
 If ArgoCD is unhealthy, do not create or trust the Root Application. If the repository is unreachable or a child definition is invalid, preserve existing healthy children, inspect Application conditions and events, and fix the issue in Git. Do not attempt to repair the bootstrap by manually applying day-2 manifests; the whole point is that Git is the single source of truth.
+
+## Related documentation
+
+- [Config Repo README (parent)](../README.md)
+- [Platform requirements](../../.kiro/specs/gitops-platform/requirements.md)
+- [GitOps and Kubernetes steering](../../.kiro/steering/20-gitops-kubernetes.md)
+- [AppProject security](../projects/README.md)
+- [ArgoCD bootstrap module (Terraform)](../../driftguard-infra/modules/addons-bootstrap/README.md)

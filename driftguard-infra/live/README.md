@@ -43,3 +43,12 @@ The `apply` step is mutating. Use the matching path for staging or production; n
 ## Failure and recovery
 
 A failed `plan` causes no infrastructure changes. A failed `apply` requires inspecting the failing resource and checking the state lock before retrying. Do not change another environment's backend or state to repair a failed run. Use the teardown wrapper only for an explicitly approved environment and account.
+
+## Related documentation
+
+- [Infrastructure README (parent)](../README.md)
+- [Module catalog](../modules/README.md)
+- [State backend bootstrap](../bootstrap/README.md)
+- [Validation scripts](../scripts/README.md)
+- [Platform requirements](../../.kiro/specs/gitops-platform/requirements.md)
+- [Terraform and AWS steering](../../.kiro/steering/10-terraform-aws.md)

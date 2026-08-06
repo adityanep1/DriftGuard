@@ -32,3 +32,9 @@ When reviewing IAM changes, confirm:
 ## Validation
 
 Run the IAM Rego policy checks, test against both valid and invalid plan fixtures, and run the Python property tests. Never test IAM by placing long-lived AWS credentials in a pod or repository.
+
+## Related documentation
+
+- [Module catalog](../README.md)
+- [Python conformance tests](../../policies/python/README.md)
+- [Live environment roots](../../live/README.md)

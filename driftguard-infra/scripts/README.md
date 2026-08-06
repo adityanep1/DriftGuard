@@ -72,3 +72,12 @@ Set-Location driftguard-infra
 A script that cannot find a required dependency (terraform, argocd, kubectl, conftest, etc.) must stop and report the issue. Missing tools are never silently skipped: that would produce a false-passing result.
 
 Do not run smoke, integration, apply, or teardown scripts against production or an unknown context. Use a dedicated test account and record tool versions, timestamps, target context, and exit codes.
+
+## Related documentation
+
+- [Infrastructure README (parent)](../README.md)
+- [Module catalog](../modules/README.md)
+- [Live environment roots](../live/README.md)
+- [Python conformance tests](../policies/python/README.md)
+- [Platform requirements](../../.kiro/specs/gitops-platform/requirements.md)
+- [Terraform and AWS steering](../../.kiro/steering/10-terraform-aws.md)

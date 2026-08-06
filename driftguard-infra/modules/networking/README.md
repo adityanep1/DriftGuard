@@ -28,3 +28,9 @@ NAT gateways are billable per hour and per GB of data processed. Non-production 
 ## Validation
 
 Run the basic example, Terraform validation, networking static tests, tag conformance, and security scans. Confirm that public routes target the internet gateway, private routes target NAT, and every taggable resource carries the three required tags (`Environment`, `Project`, `ManagedBy`). Review CIDR overlap before apply and never place EKS worker nodes in public subnets.
+
+## Related documentation
+
+- [Module catalog](../README.md)
+- [Python conformance tests](../../policies/python/README.md)
+- [Live environment roots](../../live/README.md)

@@ -36,3 +36,11 @@ Test both rejected and admitted objects. A static Rego test proves policy logic 
 ## Review checklist for policy changes
 
 When reviewing a policy change, check: match kinds, namespaces, enforcement action, required labels, host namespace fields, privileged fields, exemptions, sync ordering, and failure policy. Do not broaden exclusions just to make an upstream chart pass without documenting and testing the exception.
+
+## Related documentation
+
+- [Config Repo README (parent)](../README.md)
+- [Platform requirements](../../.kiro/specs/gitops-platform/requirements.md)
+- [Security and validation steering](../../.kiro/steering/30-security-validation.md)
+- [Conformance rules](../conformance/README.md)
+- [AppProject security](../projects/README.md)

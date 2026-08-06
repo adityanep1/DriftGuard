@@ -32,3 +32,11 @@ python -m pytest policies/python/ -q
 ```
 
 These tests run offline and validate tag completeness, security group safety, EKS API allowlists, IAM statement safety, IRSA trust scoping, node count caps, CI stage gating, and module composition.
+
+## Related documentation
+
+- [Infrastructure README (parent)](../README.md)
+- [Python conformance helpers](python/README.md)
+- [Module catalog](../modules/README.md)
+- [Platform requirements](../../.kiro/specs/gitops-platform/requirements.md)
+- [Security and validation steering](../../.kiro/steering/30-security-validation.md)

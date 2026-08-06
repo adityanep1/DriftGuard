@@ -24,3 +24,11 @@ To stop Crossplane from reconciling:
 2. Then remove the two child Application manifests from `bootstrap/children/`.
 
 Do not remove the controller before removing claims, or you will end up with orphaned AWS resources.
+
+## Related documentation
+
+- [Config Repo README (parent)](../../README.md)
+- [Platform requirements](../../../.kiro/specs/gitops-platform/requirements.md)
+- [GitOps and Kubernetes steering](../../../.kiro/steering/20-gitops-kubernetes.md)
+- [Bootstrap](../../bootstrap/README.md)
+- [AppProject security](../../projects/README.md)

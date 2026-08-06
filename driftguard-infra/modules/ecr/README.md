@@ -32,3 +32,9 @@ Untagged-image expiration limits storage cost over time. Review the retention pe
 ## Validation
 
 Run ECR plan conformance checks, required-tag verification, encryption checks, scan-on-push checks, lifecycle-policy checks, and the negative security fixture. The Python tests in `test_security_modules.py` verify that the module source declares the expected security shape (encryption, scan-on-push, lifecycle rules, no force-delete, required tags).
+
+## Related documentation
+
+- [Module catalog](../README.md)
+- [Python conformance tests](../../policies/python/README.md)
+- [Live environment roots](../../live/README.md)

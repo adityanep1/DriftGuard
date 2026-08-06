@@ -66,3 +66,24 @@ To roll back, revert the Git commit or image tag and let ArgoCD reconcile. Do no
 ## Before your first deployment
 
 Replace all `your-org` repository URLs, example domains, account IDs, and placeholder ACM/IRSA values before bootstrapping. Crossplane remains disabled until its Application manifests are deliberately promoted into the `bootstrap/children/` path.
+
+## Related documentation
+
+- [Root README](../README.md)
+- [Platform requirements](../.kiro/specs/gitops-platform/requirements.md)
+- [GitOps and Kubernetes steering](../.kiro/steering/20-gitops-kubernetes.md)
+- [CI workflow (ci-gitops.yml)](../.github/workflows/ci-gitops.yml)
+- [Pinned versions (versions.yaml)](versions.yaml)
+- [Bootstrap and handoff](bootstrap/README.md)
+- [AppProject security](projects/README.md)
+- [ApplicationSets](applicationsets/README.md)
+- [Platform add-ons](addons/README.md)
+- [Admission policies](policies/README.md)
+- [Conformance rules](conformance/README.md)
+- [Observability](observability/README.md)
+- [Secrets](secrets/README.md)
+- [Workloads (demo-service)](workloads/demo-service/README.md)
+- [Progressive delivery (rollouts)](rollouts/README.md)
+- [Test suite](tests/README.md)
+- [Scripts](scripts/README.md)
+- [Optional: Crossplane](optional/crossplane/README.md)

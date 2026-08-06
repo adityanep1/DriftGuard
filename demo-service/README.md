@@ -44,3 +44,11 @@ The pipeline has multiple stop points to prevent bad deployments:
 - A HIGH or CRITICAL vulnerability finding stops before the image is pushed to ECR.
 - A failed Config Repo update leaves the Config Repo unchanged (no partial commits).
 - If rollout analysis detects errors or latency issues in production, Argo Rollouts aborts the canary and restores the previous stable version automatically.
+
+## Related documentation
+
+- [Root README](../README.md)
+- [Platform requirements](../.kiro/specs/gitops-platform/requirements.md)
+- [CI workflow (ci-demo-service.yml)](../.github/workflows/ci-demo-service.yml)
+- [GitOps workload manifests](../driftguard-gitops/workloads/demo-service/README.md)
+- [Dockerfile](Dockerfile)

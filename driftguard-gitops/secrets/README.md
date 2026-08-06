@@ -33,3 +33,11 @@ python -m pytest tests -q
 ```
 
 For runtime validation, inspect ExternalSecret conditions, verify Secret data keys exist (without printing values), and check SecretStore provider error messages. This requires a cluster with ESO deployed and the external store accessible.
+
+## Related documentation
+
+- [Config Repo README (parent)](../README.md)
+- [Platform requirements](../../.kiro/specs/gitops-platform/requirements.md)
+- [Security and validation steering](../../.kiro/steering/30-security-validation.md)
+- [Scripts (secret scanner)](../scripts/README.md)
+- [IAM and IRSA module (Terraform)](../../driftguard-infra/modules/iam/README.md)

@@ -48,3 +48,11 @@ Without these boundaries, a single misconfigured Application could deploy anythi
 - Add-on controllers get only the cluster resources they genuinely need
 
 If you need to expand permissions (for example, adding a new CRD kind to a project), do it through a reviewed Git PR and confirm the change is intentional and minimal.
+
+## Related documentation
+
+- [Config Repo README (parent)](../README.md)
+- [Platform requirements](../../.kiro/specs/gitops-platform/requirements.md)
+- [GitOps and Kubernetes steering](../../.kiro/steering/20-gitops-kubernetes.md)
+- [Bootstrap](../bootstrap/README.md)
+- [Conformance rules](../conformance/README.md)
