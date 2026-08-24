@@ -5,17 +5,21 @@ metadata:
   namespace: argocd
   labels:
     app.kubernetes.io/part-of: driftguard-gitops
+
 spec:
   project: default
+
   source:
     repoURL: https://github.com/adityanep1/DriftGuard.git
     targetRevision: main
     path: bootstrap/children
     directory:
       recurse: true
+
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd
+
   syncPolicy:
     automated:
       selfHeal: true
