@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: https://github.com/adityanep1/DriftGuard.git
     targetRevision: main
-    path: policies
+    path: driftguard-gitops/policies
     directory:
       recurse: true
   destination:

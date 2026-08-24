@@ -13,7 +13,7 @@ spec:
     # Each environment's ArgoCD targets its own overlay (dev/staging/prod). The
     # overlay sets the node IAM role and the karpenter.sh/discovery tag to match
     # that environment's cluster. Point this at the overlay for the target cluster.
-    path: addons/karpenter/overlays/dev
+    path: driftguard-gitops/addons/karpenter/overlays/dev
   destination:
     server: https://kubernetes.default.svc
     namespace: karpenter

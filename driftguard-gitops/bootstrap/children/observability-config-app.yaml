@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: https://github.com/adityanep1/DriftGuard.git
     targetRevision: main
-    path: observability
+    path: driftguard-gitops/observability
     directory:
       recurse: true
   destination:
