@@ -8,7 +8,7 @@ metadata:
 spec:
   description: Platform controllers delivered by ArgoCD.
   sourceRepos:
-    - https://github.com/your-org/driftguard-gitops.git
+    - https://github.com/adityanep1/DriftGuard.git
     - https://argoproj.github.io/argo-helm
     - https://aws.github.io/eks-charts
     - https://charts.external-secrets.io

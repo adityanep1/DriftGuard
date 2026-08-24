@@ -8,7 +8,7 @@ metadata:
 spec:
   project: platform-addons
   source:
-    repoURL: https://github.com/your-org/driftguard-gitops.git
+    repoURL: https://github.com/adityanep1/DriftGuard.git
     targetRevision: main
     # Each environment's ArgoCD targets its own overlay (dev/staging/prod). The
     # overlay sets the node IAM role and the karpenter.sh/discovery tag to match

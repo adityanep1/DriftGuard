@@ -8,7 +8,7 @@ metadata:
 spec:
   description: Demo and application workloads.
   sourceRepos:
-    - https://github.com/your-org/driftguard-gitops.git
+    - https://github.com/adityanep1/DriftGuard.git
   destinations:
     - server: https://kubernetes.default.svc
       namespace: demo-dev

@@ -9,7 +9,7 @@ metadata:
 spec:
   project: platform-addons
   source:
-    repoURL: https://github.com/your-org/driftguard-gitops.git
+    repoURL: https://github.com/adityanep1/DriftGuard.git
     targetRevision: main
     path: optional/crossplane/resources
     directory:

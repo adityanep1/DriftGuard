@@ -8,7 +8,7 @@ metadata:
 spec:
   description: Metrics, logs, traces, dashboards, and SLO rules.
   sourceRepos:
-    - https://github.com/your-org/driftguard-gitops.git
+    - https://github.com/adityanep1/DriftGuard.git
     - https://prometheus-community.github.io/helm-charts
     - https://grafana.github.io/helm-charts
   destinations:

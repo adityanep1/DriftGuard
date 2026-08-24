@@ -30,7 +30,7 @@ spec:
     spec:
       project: workloads
       source:
-        repoURL: https://github.com/your-org/driftguard-gitops.git
+        repoURL: https://github.com/adityanep1/DriftGuard.git
         targetRevision: main
         path: '{{.path}}'
       destination:
